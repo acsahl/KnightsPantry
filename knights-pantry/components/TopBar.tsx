@@ -1,10 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { MaterialIcons, Feather } from '@expo/vector-icons';
+import { useCart } from '../context/CartContext';
 
 const YELLOW = '#FFD600';
 
 export default function TopBar({ onLogout }: { onLogout: () => void }) {
+  const { setShowNotificationOverlay } = useCart();
   return (
     <View style={styles.topBar}>
       <View style={styles.userInfo}>
@@ -17,7 +19,7 @@ export default function TopBar({ onLogout }: { onLogout: () => void }) {
         </View>
       </View>
       <View style={styles.topIcons}>
-        <TouchableOpacity style={styles.iconBtn}>
+        <TouchableOpacity style={styles.iconBtn} onPress={() => setShowNotificationOverlay(true)}>
           <Feather name="bell" size={24} color={YELLOW} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.iconBtn} onPress={onLogout}>

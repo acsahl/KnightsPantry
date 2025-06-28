@@ -9,12 +9,19 @@ export type CartItem = {
 interface CartContextType {
   cartItems: CartItem[];
   addToCart: (item: CartItem) => void;
+  removeFromCart: (index: number) => void;
+  showNotificationOverlay: boolean;
+  setShowNotificationOverlay: (show: boolean) => void;
+  selectedPickupTime: string;
+  setSelectedPickupTime: (time: string) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [showNotificationOverlay, setShowNotificationOverlay] = useState(false);
+  const [selectedPickupTime, setSelectedPickupTime] = useState('ASAP');
 
   const addToCart = (item: CartItem) => {
     setCartItems((prev) => {
@@ -23,8 +30,20 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
+  const removeFromCart = (index: number) => {
+    setCartItems((prev) => prev.filter((_, i) => i !== index));
+  };
+
   return (
-    <CartContext.Provider value={{ cartItems, addToCart }}>
+    <CartContext.Provider value={{ 
+      cartItems, 
+      addToCart, 
+      removeFromCart, 
+      showNotificationOverlay, 
+      setShowNotificationOverlay,
+      selectedPickupTime,
+      setSelectedPickupTime
+    }}>
       {children}
     </CartContext.Provider>
   );

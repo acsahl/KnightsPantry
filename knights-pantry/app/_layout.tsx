@@ -6,6 +6,7 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { CartProvider } from '../context/CartContext';
+import NotificationOverlay from '../components/NotificationOverlay';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -27,6 +28,7 @@ export default function RootLayout() {
         </Stack>
         <StatusBar style="auto" />
       </ThemeProvider>
+      <NotificationOverlay />
     </CartProvider>
   );
 }
