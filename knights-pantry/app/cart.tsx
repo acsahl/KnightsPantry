@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, FlatList, Scrol
 import TopBar from '../components/TopBar';
 import BottomNav from '../components/BottomNav';
 import { useCart } from '../context/CartContext';
-import { useRouter } from 'expo-router';
+import { useRouter, Stack } from 'expo-router';
 
 const YELLOW = '#FFD600';
 const BLACK = '#000';
@@ -149,118 +149,121 @@ export default function CartPage() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <TopBar onLogout={() => {}} />
-        <Text style={styles.heading}>Confirm items{"\n"}for <Text style={styles.bold}>checkout.</Text></Text>
-        <View style={styles.cartBox}>
-          <FlatList
-            data={cartItems}
-            keyExtractor={(_, idx) => idx.toString()}
-            renderItem={({ item, index }) => (
-              <View style={styles.cartItem}>
-                <View style={styles.cartItemContent}>
-                  <View style={styles.cartItemHeader}>
-                    <Text style={styles.cartItemTitle}>{item.title}</Text>
-                    <TouchableOpacity 
-                      style={styles.removeButton}
-                      onPress={() => removeFromCart(index)}
-                    >
-                      <Text style={styles.removeButtonText}>×</Text>
-                    </TouchableOpacity>
+    <>
+      <Stack.Screen options={{ headerShown: false }} />
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.container}>
+          <TopBar onLogout={() => {}} />
+          <Text style={styles.heading}>Confirm items{"\n"}for <Text style={styles.bold}>checkout.</Text></Text>
+          <View style={styles.cartBox}>
+            <FlatList
+              data={cartItems}
+              keyExtractor={(_, idx) => idx.toString()}
+              renderItem={({ item, index }) => (
+                <View style={styles.cartItem}>
+                  <View style={styles.cartItemContent}>
+                    <View style={styles.cartItemHeader}>
+                      <Text style={styles.cartItemTitle}>{item.title}</Text>
+                      <TouchableOpacity 
+                        style={styles.removeButton}
+                        onPress={() => removeFromCart(index)}
+                      >
+                        <Text style={styles.removeButtonText}>×</Text>
+                      </TouchableOpacity>
+                    </View>
+                    <Text style={styles.cartItemDesc}>{item.description}</Text>
                   </View>
-                  <Text style={styles.cartItemDesc}>{item.description}</Text>
                 </View>
-              </View>
-            )}
-            ListEmptyComponent={<Text style={{ color: '#888', padding: 12 }}>No items in cart.</Text>}
-          />
-        </View>
-        <Text style={styles.selectTime}>Select a time</Text>
-        <View style={styles.timeContainer}>
-          {mainButtons.map((time) => {
-            const isScheduleButton = time === 'Schedule';
-            const isCustomTimeSelected = !times.includes(selectedTime) && selectedTime !== 'ASAP';
-            const isSelected = selectedTime === time || (isCustomTimeSelected && isScheduleButton) || (showScheduleModal && isScheduleButton);
-            const displayText = isScheduleButton && isCustomTimeSelected ? selectedTime : time;
-            
-            return (
-              <TouchableOpacity
-                key={time}
-                style={[styles.timeBtn, isSelected && styles.timeBtnSelected]}
-                onPress={() => handleTimeSelect(time)}
-              >
-                <Text style={[styles.timeBtnText, isSelected && styles.timeBtnTextSelected]}>
-                  {displayText}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-        <TouchableOpacity style={styles.checkoutBtn} onPress={() => router.replace({
-          pathname: '/checkoutConfirmation',
-          params: { selectedTime }
-        })}>
-          <Text style={styles.checkoutText}>Checkout</Text>
-        </TouchableOpacity>
-      </View>
-      
-      {/* Schedule Time Picker Modal */}
-      <Modal
-        visible={showScheduleModal}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setShowScheduleModal(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Select Pickup Time</Text>
-            <Text style={styles.modalSubtitle}>Knights Pantry Hours: 9:00 AM - 5:00 PM</Text>
-            
-            <ScrollView style={styles.modalTimeList}>
-              {scheduleOptions.filter((time) => {
-                const now = new Date();
-                const currentHour = now.getHours();
-                const currentMinutes = now.getMinutes();
-                
-                // Parse the time string to get hour and minute
-                const timeRegex = /(\d{1,2}):(\d{2})\s*(AM|PM)/i;
-                const match = time.match(timeRegex);
-                if (!match) return false;
-                
-                let hour = parseInt(match[1]);
-                const minute = parseInt(match[2]);
-                const period = match[3].toUpperCase();
-                
-                // Convert to 24-hour format
-                if (period === 'PM' && hour !== 12) hour += 12;
-                if (period === 'AM' && hour === 12) hour = 0;
-                
-                // Only show future times
-                return hour > currentHour || (hour === currentHour && minute > currentMinutes);
-              }).map((time) => (
+              )}
+              ListEmptyComponent={<Text style={{ color: '#888', padding: 12 }}>No items in cart.</Text>}
+            />
+          </View>
+          <Text style={styles.selectTime}>Select a time</Text>
+          <View style={styles.timeContainer}>
+            {mainButtons.map((time) => {
+              const isScheduleButton = time === 'Schedule';
+              const isCustomTimeSelected = !times.includes(selectedTime) && selectedTime !== 'ASAP';
+              const isSelected = selectedTime === time || (isCustomTimeSelected && isScheduleButton) || (showScheduleModal && isScheduleButton);
+              const displayText = isScheduleButton && isCustomTimeSelected ? selectedTime : time;
+              
+              return (
                 <TouchableOpacity
                   key={time}
-                  style={styles.modalTimeBtn}
-                  onPress={() => handleScheduleSelect(time)}
+                  style={[styles.timeBtn, isSelected && styles.timeBtnSelected]}
+                  onPress={() => handleTimeSelect(time)}
                 >
-                  <Text style={styles.modalTimeBtnText}>{time}</Text>
+                  <Text style={[styles.timeBtnText, isSelected && styles.timeBtnTextSelected]}>
+                    {displayText}
+                  </Text>
                 </TouchableOpacity>
-              ))}
-            </ScrollView>
-            
-            <TouchableOpacity 
-              style={styles.modalCloseBtn}
-              onPress={() => setShowScheduleModal(false)}
-            >
-              <Text style={styles.modalCloseBtnText}>Cancel</Text>
-            </TouchableOpacity>
+              );
+            })}
           </View>
+          <TouchableOpacity style={styles.checkoutBtn} onPress={() => router.replace({
+            pathname: '/checkoutConfirmation',
+            params: { selectedTime }
+          })}>
+            <Text style={styles.checkoutText}>Checkout</Text>
+          </TouchableOpacity>
         </View>
-      </Modal>
-      
-      <BottomNav />
-    </SafeAreaView>
+        
+        {/* Schedule Time Picker Modal */}
+        <Modal
+          visible={showScheduleModal}
+          transparent={true}
+          animationType="slide"
+          onRequestClose={() => setShowScheduleModal(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Select Pickup Time</Text>
+              <Text style={styles.modalSubtitle}>Knights Pantry Hours: 9:00 AM - 5:00 PM</Text>
+              
+              <ScrollView style={styles.modalTimeList}>
+                {scheduleOptions.filter((time) => {
+                  const now = new Date();
+                  const currentHour = now.getHours();
+                  const currentMinutes = now.getMinutes();
+                  
+                  // Parse the time string to get hour and minute
+                  const timeRegex = /(\d{1,2}):(\d{2})\s*(AM|PM)/i;
+                  const match = time.match(timeRegex);
+                  if (!match) return false;
+                  
+                  let hour = parseInt(match[1]);
+                  const minute = parseInt(match[2]);
+                  const period = match[3].toUpperCase();
+                  
+                  // Convert to 24-hour format
+                  if (period === 'PM' && hour !== 12) hour += 12;
+                  if (period === 'AM' && hour === 12) hour = 0;
+                  
+                  // Only show future times
+                  return hour > currentHour || (hour === currentHour && minute > currentMinutes);
+                }).map((time) => (
+                  <TouchableOpacity
+                    key={time}
+                    style={styles.modalTimeBtn}
+                    onPress={() => handleScheduleSelect(time)}
+                  >
+                    <Text style={styles.modalTimeBtnText}>{time}</Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+              
+              <TouchableOpacity 
+                style={styles.modalCloseBtn}
+                onPress={() => setShowScheduleModal(false)}
+              >
+                <Text style={styles.modalCloseBtnText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+        
+        <BottomNav />
+      </SafeAreaView>
+    </>
   );
 }
 
