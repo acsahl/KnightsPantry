@@ -1,16 +1,15 @@
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
-import { MaterialIcons, Feather, Ionicons, FontAwesome } from '@expo/vector-icons';
+import { MaterialIcons, Feather, Ionicons } from '@expo/vector-icons';
 import TopBar from '../components/TopBar';
 import BottomNav from '../components/BottomNav';
 
 const YELLOW = '#FFD600';
 const BLACK = '#000';
 const WHITE = '#fff';
-const SCREEN_HEIGHT = Dimensions.get('window').height;
 
-export default function DonationPage() {
+export default function ScanItemsPage() {
   const router = useRouter();
   return (
     <>
@@ -29,9 +28,9 @@ export default function DonationPage() {
               </View>
             </View>
             <View style={styles.topIcons}>
-              <TouchableOpacity style={styles.iconBtn}>
+              <View style={styles.iconBtn}>
                 <Feather name="bell" size={24} color={YELLOW} />
-              </TouchableOpacity>
+              </View>
               <TouchableOpacity style={styles.iconBtn} onPress={() => router.replace('/')}>
                 <MaterialIcons name="logout" size={24} color={YELLOW} />
               </TouchableOpacity>
@@ -39,23 +38,10 @@ export default function DonationPage() {
           </View>
 
           {/* Heading */}
-          <Text style={styles.heading}>
-            Make a real <Text style={styles.bold}>difference</Text> for{"\n"}UCF students.
-          </Text>
+          <Text style={styles.heading}>Scan your{"\n"}item</Text>
 
-          {/* Donation Options */}
-          <View style={styles.donationOptions}>
-            <TouchableOpacity style={styles.donationCard} onPress={() => router.push('/logItem')}>
-              <FontAwesome name="cube" size={38} color={BLACK} style={{ marginBottom: 10 }} />
-              <Text style={styles.donationCardTitle}>Item</Text>
-              <Text style={styles.donationCardSubtitle}>donation</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.donationCard}>
-              <FontAwesome name="dollar" size={38} color={BLACK} style={{ marginBottom: 10 }} />
-              <Text style={styles.donationCardTitle}>Monetary</Text>
-              <Text style={styles.donationCardSubtitle}>donation</Text>
-            </TouchableOpacity>
-          </View>
+          {/* Gray Rectangle Placeholder */}
+          <View style={styles.scannerPlaceholder} />
         </View>
 
         {/* Bottom Nav Bar */}
@@ -116,43 +102,19 @@ const styles = StyleSheet.create({
   },
   heading: {
     color: WHITE,
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: '400',
-    marginBottom: 32,
+    marginBottom: 24,
     marginTop: 10,
-    lineHeight: 38,
+    lineHeight: 32,
   },
-  bold: {
-    fontWeight: 'bold',
-    color: WHITE,
-  },
-  donationOptions: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  donationCard: {
-    backgroundColor: WHITE,
-    borderRadius: 12,
-    width: '90%',
-    maxWidth: 320,
-    alignItems: 'center',
-    paddingVertical: 32,
-    marginBottom: 32,
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  donationCardTitle: {
-    color: BLACK,
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 2,
-  },
-  donationCardSubtitle: {
-    color: BLACK,
-    fontSize: 15,
-    fontWeight: '400',
+  scannerPlaceholder: {
+    width: '100%',
+    aspectRatio: 1,
+    backgroundColor: '#D9D9D9',
+    borderRadius: 8,
+    alignSelf: 'center',
+    marginTop: 8,
+    marginBottom: 16,
   },
 }); 

@@ -1,16 +1,17 @@
-import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, FlatList } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
-import { MaterialIcons, Feather, Ionicons, FontAwesome } from '@expo/vector-icons';
+import { MaterialIcons, Feather, Ionicons } from '@expo/vector-icons';
 import TopBar from '../components/TopBar';
 import BottomNav from '../components/BottomNav';
+import ProductCard from '../components/ProductCard';
+import exampleProducts from '../assets/exampleProducts.json';
 
 const YELLOW = '#FFD600';
 const BLACK = '#000';
 const WHITE = '#fff';
-const SCREEN_HEIGHT = Dimensions.get('window').height;
 
-export default function DonationPage() {
+export default function ClothingPage() {
   const router = useRouter();
   return (
     <>
@@ -32,32 +33,22 @@ export default function DonationPage() {
               <TouchableOpacity style={styles.iconBtn}>
                 <Feather name="bell" size={24} color={YELLOW} />
               </TouchableOpacity>
-              <TouchableOpacity style={styles.iconBtn} onPress={() => router.replace('/')}>
+              <TouchableOpacity style={styles.iconBtn} onPress={() => router.replace('/')}> 
                 <MaterialIcons name="logout" size={24} color={YELLOW} />
               </TouchableOpacity>
             </View>
           </View>
-
-          {/* Heading */}
-          <Text style={styles.heading}>
-            Make a real <Text style={styles.bold}>difference</Text> for{"\n"}UCF students.
-          </Text>
-
-          {/* Donation Options */}
-          <View style={styles.donationOptions}>
-            <TouchableOpacity style={styles.donationCard} onPress={() => router.push('/logItem')}>
-              <FontAwesome name="cube" size={38} color={BLACK} style={{ marginBottom: 10 }} />
-              <Text style={styles.donationCardTitle}>Item</Text>
-              <Text style={styles.donationCardSubtitle}>donation</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.donationCard}>
-              <FontAwesome name="dollar" size={38} color={BLACK} style={{ marginBottom: 10 }} />
-              <Text style={styles.donationCardTitle}>Monetary</Text>
-              <Text style={styles.donationCardSubtitle}>donation</Text>
-            </TouchableOpacity>
-          </View>
+          {/* Page Content */}
+          <FlatList
+            data={(exampleProducts as any[]).filter(p => p.category === 'Clothing')}
+            keyExtractor={(_, idx) => idx.toString()}
+            renderItem={({ item }) => (
+              <ProductCard title={item.title} description={item.description} category={item.category} />
+            )}
+            style={{ marginTop: 10 }}
+            contentContainerStyle={{ paddingBottom: 20 }}
+          />
         </View>
-
         {/* Bottom Nav Bar */}
         <BottomNav />
       </SafeAreaView>
@@ -113,46 +104,5 @@ const styles = StyleSheet.create({
   },
   iconBtn: {
     marginLeft: 16,
-  },
-  heading: {
-    color: WHITE,
-    fontSize: 32,
-    fontWeight: '400',
-    marginBottom: 32,
-    marginTop: 10,
-    lineHeight: 38,
-  },
-  bold: {
-    fontWeight: 'bold',
-    color: WHITE,
-  },
-  donationOptions: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  donationCard: {
-    backgroundColor: WHITE,
-    borderRadius: 12,
-    width: '90%',
-    maxWidth: 320,
-    alignItems: 'center',
-    paddingVertical: 32,
-    marginBottom: 32,
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  donationCardTitle: {
-    color: BLACK,
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 2,
-  },
-  donationCardSubtitle: {
-    color: BLACK,
-    fontSize: 15,
-    fontWeight: '400',
   },
 }); 

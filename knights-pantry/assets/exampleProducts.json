@@ -1,0 +1,131 @@
+[
+  {
+    "title": "Toothpaste",
+    "category": "Toiletries",
+    "description": "Fluoride toothpaste for daily dental hygiene."
+  },
+  {
+    "title": "Shampoo",
+    "category": "Toiletries",
+    "description": "Gentle shampoo suitable for all hair types."
+  },
+  {
+    "title": "Bar Soap",
+    "category": "Toiletries",
+    "description": "Mild bar soap for sensitive skin."
+  },
+  {
+    "title": "Toothbrush",
+    "category": "Toiletries",
+    "description": "Soft-bristled toothbrush for effective cleaning."
+  },
+  {
+    "title": "Deodorant",
+    "category": "Toiletries",
+    "description": "Long-lasting deodorant stick."
+  },
+
+  {
+    "title": "Bath Towel",
+    "category": "Home Goods",
+    "description": "Soft cotton bath towel."
+  },
+  {
+    "title": "Pillow",
+    "category": "Home Goods",
+    "description": "Comfortable pillow for a good night's sleep."
+  },
+  {
+    "title": "Blanket",
+    "category": "Home Goods",
+    "description": "Warm fleece blanket."
+  },
+  {
+    "title": "Dish Soap",
+    "category": "Home Goods",
+    "description": "Liquid dish soap for cleaning dishes."
+  },
+  {
+    "title": "Laundry Detergent",
+    "category": "Home Goods",
+    "description": "Detergent for washing clothes."
+  },
+
+  {
+    "title": "Notebook",
+    "category": "School Supplies",
+    "description": "College-ruled spiral notebook."
+  },
+  {
+    "title": "Pens",
+    "category": "School Supplies",
+    "description": "Pack of blue and black ink pens."
+  },
+  {
+    "title": "Backpack",
+    "category": "School Supplies",
+    "description": "Durable backpack with multiple compartments."
+  },
+  {
+    "title": "Highlighters",
+    "category": "School Supplies",
+    "description": "Set of assorted color highlighters."
+  },
+  {
+    "title": "Calculator",
+    "category": "School Supplies",
+    "description": "Scientific calculator for math and science classes."
+  },
+
+  {
+    "title": "T-shirt",
+    "category": "Clothing",
+    "description": "Cotton t-shirt, various sizes."
+  },
+  {
+    "title": "Jeans",
+    "category": "Clothing",
+    "description": "Classic blue jeans."
+  },
+  {
+    "title": "Jacket",
+    "category": "Clothing",
+    "description": "Lightweight jacket for cool weather."
+  },
+  {
+    "title": "Sneakers",
+    "category": "Clothing",
+    "description": "Comfortable sneakers for everyday use."
+  },
+  {
+    "title": "Socks",
+    "category": "Clothing",
+    "description": "Pack of ankle socks."
+  },
+
+  {
+    "title": "Umbrella",
+    "category": "Other",
+    "description": "Compact umbrella for rainy days."
+  },
+  {
+    "title": "Water Bottle",
+    "category": "Other",
+    "description": "Reusable water bottle."
+  },
+  {
+    "title": "Earbuds",
+    "category": "Other",
+    "description": "Wired earbuds for music and calls."
+  },
+  {
+    "title": "Flashlight",
+    "category": "Other",
+    "description": "Battery-powered flashlight."
+  },
+  {
+    "title": "First Aid Kit",
+    "category": "Other",
+    "description": "Basic first aid kit for emergencies."
+  }
+] 
