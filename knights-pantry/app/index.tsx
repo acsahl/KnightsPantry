@@ -1,26 +1,36 @@
 import React from 'react';
-import { View, Text, StatusBar, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { useRouter } from 'expo-router';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native';
+import { useRouter, Stack } from 'expo-router';
 
 const YELLOW = '#FFD600';
 const BLACK = '#000';
+const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
+const BOTTOM_HEIGHT = 170;
 
 export default function IndexScreen() {
   const router = useRouter();
   return (
-    <View style={{ flex: 1, backgroundColor: BLACK }}>
-      <StatusBar backgroundColor={BLACK} barStyle="light-content" />
-      <View style={styles.container}>
-        <View style={styles.logoContainer}>
-          <Image source={require('../assets/images/ucflogo.png')} style={styles.logo} />
+    <>
+      <Stack.Screen options={{ headerShown: false }} />
+      <View style={styles.root}>
+        <View style={styles.topCard}>
+          <View style={styles.centerContent}>
+            <Image source={require('../assets/images/ucflogo.png')} style={styles.logo} />
+            <Text style={styles.title}>
+              Making <Text style={styles.titleItalic}>Knights Pantry</Text>{'\n'}
+              <Text style={styles.titleBold}>accessible</Text>
+            </Text>
+            <Text style={styles.subtitle}>
+              with a shopping{`\ncatalog to meet every\nstudents' need`}
+            </Text>
+            <View style={styles.dotsRow}>
+              <View style={styles.dotActive} />
+              <View style={styles.dotInactive} />
+              <View style={styles.dotInactive} />
+            </View>
+          </View>
         </View>
-        <Text style={styles.title}>Making <Text style={styles.titleItalic}>Knights Pantry</Text> <Text style={styles.titleBold}>accessible</Text></Text>
-        <Text style={styles.subtitle}>with a shopping{"\n"}catalog to meet every{"\n"}students' need</Text>
-        <View style={styles.dotsRow}>
-          <View style={styles.dotActive} />
-          <View style={styles.dotInactive} />
-        </View>
-        <View style={styles.bottomSection}>
+        <View style={styles.bottomCard}>
           <TouchableOpacity style={styles.signupBtn} onPress={() => router.push('/signup')}>
             <Text style={styles.signupText}>Sign up</Text>
           </TouchableOpacity>
@@ -29,92 +39,116 @@ export default function IndexScreen() {
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  root: {
     flex: 1,
-    backgroundColor: BLACK,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
+    backgroundColor: YELLOW,
+    width: '100%',
+    height: '100%',
   },
-  logoContainer: {
-    marginBottom: 32,
+  topCard: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: BOTTOM_HEIGHT,
+    backgroundColor: BLACK,
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
+    justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 1,
+  },
+  centerContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 40,
+    marginBottom: 32,
+    paddingHorizontal: 24,
   },
   logo: {
-    width: 160,
-    height: 160,
+    width: 140,
+    height: 140,
     resizeMode: 'contain',
+    marginBottom: 18,
   },
   title: {
     color: YELLOW,
-    fontSize: 32,
+    fontSize: 30,
     fontWeight: '400',
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: 0,
+    lineHeight: 36,
   },
   titleItalic: {
     fontStyle: 'italic',
-    fontWeight: '500',
+    fontWeight: '400',
     color: YELLOW,
   },
   titleBold: {
     fontWeight: 'bold',
     color: YELLOW,
+    fontSize: 32,
   },
   subtitle: {
     color: YELLOW,
     fontSize: 18,
     textAlign: 'center',
-    marginBottom: 24,
+    marginTop: 18,
+    marginBottom: 18,
+    lineHeight: 24,
   },
   dotsRow: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 32,
+    marginTop: 8,
+    marginBottom: 0,
   },
   dotActive: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
+    width: 22,
+    height: 8,
+    borderRadius: 4,
     backgroundColor: YELLOW,
-    borderWidth: 2,
-    borderColor: BLACK,
     marginHorizontal: 4,
   },
   dotInactive: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    backgroundColor: '#222',
-    borderWidth: 2,
-    borderColor: BLACK,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#444',
     marginHorizontal: 4,
   },
-  bottomSection: {
-    width: '100%',
+  bottomCard: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: BOTTOM_HEIGHT,
     backgroundColor: YELLOW,
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
-    paddingVertical: 32,
-    paddingHorizontal: 24,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
+    alignItems: 'center',
+    paddingVertical: 36,
+    paddingHorizontal: 24,
+    zIndex: 2,
   },
   signupBtn: {
     flex: 1,
     backgroundColor: '#fff',
     borderRadius: 30,
-    paddingVertical: 16,
+    paddingVertical: 18,
     alignItems: 'center',
-    marginRight: 8,
+    marginRight: 12,
   },
   signupText: {
     color: BLACK,
@@ -125,9 +159,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: BLACK,
     borderRadius: 30,
-    paddingVertical: 16,
+    paddingVertical: 18,
     alignItems: 'center',
-    marginLeft: 8,
+    marginLeft: 12,
   },
   loginText: {
     color: '#fff',
