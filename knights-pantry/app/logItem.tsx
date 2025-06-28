@@ -1,14 +1,13 @@
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { MaterialIcons, Feather, Ionicons, FontAwesome } from '@expo/vector-icons';
 
 const YELLOW = '#FFD600';
 const BLACK = '#000';
 const WHITE = '#fff';
-const SCREEN_HEIGHT = Dimensions.get('window').height;
 
-export default function DonationPage() {
+export default function LogItemPage() {
   const router = useRouter();
   return (
     <>
@@ -37,21 +36,19 @@ export default function DonationPage() {
           </View>
 
           {/* Heading */}
-          <Text style={styles.heading}>
-            Make a real <Text style={styles.bold}>difference</Text> for{"\n"}UCF students.
-          </Text>
+          <Text style={styles.heading}>Log your item{"\n"}in two ways.</Text>
 
-          {/* Donation Options */}
-          <View style={styles.donationOptions}>
-            <TouchableOpacity style={styles.donationCard} onPress={() => router.push('/logItem')}>
-              <FontAwesome name="cube" size={38} color={BLACK} style={{ marginBottom: 10 }} />
-              <Text style={styles.donationCardTitle}>Item</Text>
-              <Text style={styles.donationCardSubtitle}>donation</Text>
+          {/* Scan/Manual Input Options */}
+          <View style={styles.optionsContainer}>
+            <Text style={styles.optionLabel}>If your item has a bar-code</Text>
+            <TouchableOpacity style={styles.optionCard} onPress={() => router.push('/scanItems')}>
+              <FontAwesome name="cube" size={32} color={BLACK} style={{ marginBottom: 10 }} />
+              <Text style={styles.optionCardText}>Scan your items</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.donationCard}>
-              <FontAwesome name="dollar" size={38} color={BLACK} style={{ marginBottom: 10 }} />
-              <Text style={styles.donationCardTitle}>Monetary</Text>
-              <Text style={styles.donationCardSubtitle}>donation</Text>
+            <Text style={styles.optionLabel}>No bar-code? No problem!</Text>
+            <TouchableOpacity style={styles.optionCard}>
+              <FontAwesome name="dollar" size={32} color={BLACK} style={{ marginBottom: 10 }} />
+              <Text style={styles.optionCardText}>Manual Input</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -63,7 +60,7 @@ export default function DonationPage() {
               <Ionicons name="home" size={22} color={BLACK} />
             </View>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.navBtn}>
+          <TouchableOpacity style={styles.navBtn} onPress={() => router.replace('/donation')}>
             <View style={styles.navIconCircle}>
               <Ionicons name="gift" size={22} color={BLACK} />
             </View>
@@ -130,44 +127,40 @@ const styles = StyleSheet.create({
   },
   heading: {
     color: WHITE,
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: '400',
-    marginBottom: 32,
+    marginBottom: 24,
     marginTop: 10,
-    lineHeight: 38,
+    lineHeight: 32,
   },
-  bold: {
-    fontWeight: 'bold',
-    color: WHITE,
-  },
-  donationOptions: {
+  optionsContainer: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'flex-start',
   },
-  donationCard: {
+  optionLabel: {
+    color: WHITE,
+    fontSize: 13,
+    marginBottom: 8,
+    marginTop: 8,
+    fontWeight: '400',
+  },
+  optionCard: {
     backgroundColor: WHITE,
     borderRadius: 12,
-    width: '90%',
-    maxWidth: 320,
+    width: 180,
     alignItems: 'center',
-    paddingVertical: 32,
-    marginBottom: 32,
+    paddingVertical: 18,
+    marginBottom: 16,
     shadowColor: '#000',
     shadowOpacity: 0.08,
     shadowRadius: 4,
     elevation: 2,
   },
-  donationCardTitle: {
+  optionCardText: {
     color: BLACK,
-    fontSize: 22,
+    fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 2,
-  },
-  donationCardSubtitle: {
-    color: BLACK,
-    fontSize: 15,
-    fontWeight: '400',
   },
   bottomNav: {
     flexDirection: 'row',
