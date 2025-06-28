@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { MaterialIcons, Feather, Ionicons } from '@expo/vector-icons';
 
@@ -29,9 +29,9 @@ export default function ScanItemsPage() {
               <View style={styles.iconBtn}>
                 <Feather name="bell" size={24} color={YELLOW} />
               </View>
-              <View style={styles.iconBtn}>
+              <TouchableOpacity style={styles.iconBtn} onPress={() => router.replace('/')}>
                 <MaterialIcons name="logout" size={24} color={YELLOW} />
-              </View>
+              </TouchableOpacity>
             </View>
           </View>
 
@@ -44,21 +44,21 @@ export default function ScanItemsPage() {
 
         {/* Bottom Nav Bar (same as home) */}
         <View style={styles.bottomNav}>
-          <View style={styles.navBtn}>
+          <TouchableOpacity style={styles.navBtn} onPress={() => router.replace('/home')}>
             <View style={styles.navIconCircle}>
               <Ionicons name="home" size={22} color={BLACK} />
             </View>
-          </View>
-          <View style={styles.navBtn}>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.navBtn} onPress={() => router.replace('/donation')}>
             <View style={styles.navIconCircle}>
               <Ionicons name="gift" size={22} color={BLACK} />
             </View>
-          </View>
-          <View style={styles.navBtn}>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.navBtn}>
             <View style={styles.navIconCircle}>
               <Ionicons name="cart" size={22} color={BLACK} />
             </View>
-          </View>
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
     </>

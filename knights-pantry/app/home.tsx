@@ -1,7 +1,9 @@
-import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Dimensions } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Dimensions, FlatList } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { MaterialIcons, Feather, FontAwesome, Ionicons } from '@expo/vector-icons';
+import ProductCard from '../components/ProductCard';
+import exampleProducts from '../assets/exampleProducts.json';
 
 const YELLOW = '#FFD600';
 const BLACK = '#000';
@@ -18,8 +20,28 @@ const categories: Category[] = [
   { label: 'Other', icon: 'archive' },
 ];
 
+type Product = { title: string; category: string; description: string };
+
 export default function HomePage() {
   const router = useRouter();
+  const [search, setSearch] = useState('');
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    const query = search.trim().toLowerCase();
+    if (!query) {
+      setFilteredProducts([]);
+      return;
+    }
+    setFilteredProducts(
+      (exampleProducts as Product[]).filter(
+        (p) =>
+          p.title.toLowerCase().includes(query) ||
+          p.description.toLowerCase().includes(query)
+      )
+    );
+  }, [search]);
+
   return (
     <>
       <Stack.Screen options={{ title: 'Home', headerShown: false }} />
@@ -40,7 +62,7 @@ export default function HomePage() {
               <TouchableOpacity style={styles.iconBtn}>
                 <Feather name="bell" size={24} color={YELLOW} />
               </TouchableOpacity>
-              <TouchableOpacity style={styles.iconBtn}>
+              <TouchableOpacity style={styles.iconBtn} onPress={() => router.replace('/')}>
                 <MaterialIcons name="logout" size={24} color={YELLOW} />
               </TouchableOpacity>
             </View>
@@ -52,37 +74,66 @@ export default function HomePage() {
               style={styles.searchInput}
               placeholder="What are you looking for?"
               placeholderTextColor="#fff"
+              value={search}
+              onChangeText={setSearch}
             />
             <Feather name="search" size={20} color={WHITE} style={styles.searchIcon} />
           </View>
 
-          {/* Categories */}
-          <View style={styles.categoriesRow}>
-            {categories.slice(0, 3).map((cat, idx) => (
-              <TouchableOpacity key={cat.label} style={styles.categoryBtn}>
-                <View style={styles.categoryIconCircle}>
-                  <FontAwesome name={cat.icon} size={20} color={BLACK} />
-                </View>
-                <Text style={styles.categoryLabel}>{cat.label}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-          <View style={styles.categoriesRow}>
-            {categories.slice(3).map((cat, idx) => (
-              <TouchableOpacity key={cat.label} style={styles.categoryBtn}>
-                <View style={styles.categoryIconCircle}>
-                  <FontAwesome name={cat.icon} size={20} color={BLACK} />
-                </View>
-                <Text style={styles.categoryLabel}>{cat.label}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+          {/* Product List (search results) */}
+          {search.trim() ? (
+            <FlatList
+              data={filteredProducts}
+              keyExtractor={(_, idx) => idx.toString()}
+              renderItem={({ item }) => (
+                <ProductCard title={item.title} description={item.description} />
+              )}
+              style={{ marginTop: 10 }}
+              contentContainerStyle={{ paddingBottom: 20 }}
+            />
+          ) : (
+            <>
+              {/* Categories */}
+              <View style={styles.categoriesRow}>
+                {categories.slice(0, 3).map((cat, idx) => (
+                  <TouchableOpacity key={cat.label} style={styles.categoryBtn} onPress={() => {
+                    if (cat.label === 'Toiletries') router.push('/toiletries');
+                    else if (cat.label === 'Home Goods') router.push('/homeGoods');
+                    else if (cat.label === 'School Supplies') router.push('/schoolSupplies');
+                    else if (cat.label === 'Clothing') router.push('/clothing');
+                    else if (cat.label === 'Other') router.push('/other');
+                  }}>
+                    <View style={styles.categoryIconCircle}>
+                      <FontAwesome name={cat.icon} size={20} color={BLACK} />
+                    </View>
+                    <Text style={styles.categoryLabel}>{cat.label}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              <View style={styles.categoriesRow}>
+                {categories.slice(3).map((cat, idx) => (
+                  <TouchableOpacity key={cat.label} style={styles.categoryBtn} onPress={() => {
+                    if (cat.label === 'Toiletries') router.push('/toiletries');
+                    else if (cat.label === 'Home Goods') router.push('/homeGoods');
+                    else if (cat.label === 'School Supplies') router.push('/schoolSupplies');
+                    else if (cat.label === 'Clothing') router.push('/clothing');
+                    else if (cat.label === 'Other') router.push('/other');
+                  }}>
+                    <View style={styles.categoryIconCircle}>
+                      <FontAwesome name={cat.icon} size={20} color={BLACK} />
+                    </View>
+                    <Text style={styles.categoryLabel}>{cat.label}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
 
-          {/* Donation Card */}
-          <View style={styles.donateCard}>
-            <Text style={styles.donateTitle}>Interested in <Text style={styles.donateBold}>Donating?</Text></Text>
-            <Text style={styles.donateDesc}>Help make an impact by clicking on the gift icon below and donating.</Text>
-          </View>
+              {/* Donation Card */}
+              <View style={styles.donateCard}>
+                <Text style={styles.donateTitle}>Interested in <Text style={styles.donateBold}>Donating?</Text></Text>
+                <Text style={styles.donateDesc}>Help make an impact by clicking on the gift icon below and donating.</Text>
+              </View>
+            </>
+          )}
         </View>
 
         {/* Bottom Nav Bar */}

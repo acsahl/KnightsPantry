@@ -30,7 +30,7 @@ export default function DonationPage() {
               <TouchableOpacity style={styles.iconBtn}>
                 <Feather name="bell" size={24} color={YELLOW} />
               </TouchableOpacity>
-              <TouchableOpacity style={styles.iconBtn}>
+              <TouchableOpacity style={styles.iconBtn} onPress={() => router.replace('/')}>
                 <MaterialIcons name="logout" size={24} color={YELLOW} />
               </TouchableOpacity>
             </View>
