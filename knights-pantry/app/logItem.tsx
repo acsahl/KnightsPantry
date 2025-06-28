@@ -48,7 +48,7 @@ export default function LogItemPage() {
               <Text style={styles.optionCardText}>Scan your items</Text>
             </TouchableOpacity>
             <Text style={styles.optionLabel}>No bar-code? No problem!</Text>
-            <TouchableOpacity style={styles.optionCard}>
+            <TouchableOpacity style={styles.optionCard} onPress={() => router.push('/manualItemInput')}>
               <FontAwesome name="dollar" size={32} color={BLACK} style={{ marginBottom: 10 }} />
               <Text style={styles.optionCardText}>Manual Input</Text>
             </TouchableOpacity>
@@ -133,11 +133,11 @@ const styles = StyleSheet.create({
   },
   optionCard: {
     backgroundColor: WHITE,
-    borderRadius: 12,
-    width: 180,
+    borderRadius: 16,
+    width: 240,
     alignItems: 'center',
-    paddingVertical: 18,
-    marginBottom: 16,
+    paddingVertical: 32,
+    marginBottom: 24,
     shadowColor: '#000',
     shadowOpacity: 0.08,
     shadowRadius: 4,
@@ -145,7 +145,8 @@ const styles = StyleSheet.create({
   },
   optionCardText: {
     color: BLACK,
-    fontSize: 16,
+    fontSize: 22,
     fontWeight: 'bold',
+    marginTop: 4,
   },
 }); 
