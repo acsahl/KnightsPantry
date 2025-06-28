@@ -50,7 +50,7 @@ export default function DonationPage() {
               <Text style={styles.donationCardTitle}>Item</Text>
               <Text style={styles.donationCardSubtitle}>donation</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.donationCard}>
+            <TouchableOpacity style={styles.donationCard} onPress={() => router.push('/manualDonation')}>
               <FontAwesome name="dollar" size={38} color={BLACK} style={{ marginBottom: 10 }} />
               <Text style={styles.donationCardTitle}>Monetary</Text>
               <Text style={styles.donationCardSubtitle}>donation</Text>
