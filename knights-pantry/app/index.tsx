@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Image } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 
 export default function HomeScreen() {
@@ -9,7 +9,9 @@ export default function HomeScreen() {
       <Stack.Screen options={{ headerShown: false }} />
       <SafeAreaView style={styles.container}>
         <View style={styles.content}>
-          <Image source={require('@/assets/images/ucflogo.png')} style={styles.logo} resizeMode="contain" />
+          <View style={styles.logoContainer}>
+            <Image source={require('@/assets/images/ucflogo.png')} style={styles.logo} resizeMode="contain" />
+          </View>
           <View style={styles.textBlock}>
             <Text style={styles.title}>
               Making <Text style={styles.italic}>Knights{"\n"}Pantry</Text>
@@ -24,13 +26,15 @@ export default function HomeScreen() {
             <View style={styles.dot} />
           </View>
         </View>
-        <View style={styles.buttonRow}>
-          <TouchableOpacity style={styles.signupBtn} onPress={() => router.push('/signup')}>
-            <Text style={styles.signupText}>Sign up</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.loginBtn}>
-            <Text style={styles.loginText}>Log in</Text>
-          </TouchableOpacity>
+        <View style={styles.buttonSection}>
+          <View style={styles.buttonRow}>
+            <TouchableOpacity style={styles.signupBtn} onPress={() => router.push('/signup')}>
+              <Text style={styles.signupText}>Sign up</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.loginBtn} onPress={() => router.push('/login')}>
+              <Text style={styles.loginText}>Log in</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </SafeAreaView>
     </>
@@ -44,31 +48,41 @@ const WHITE = '#fff';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: BLACK,
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    backgroundColor: YELLOW,
   },
   content: {
-    flex: 1,
+    flex: 0.88,
+    backgroundColor: BLACK,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
+    paddingHorizontal: 20,
+  },
+  logoContainer: {
+    width: 120,
+    height: 120,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 30,
   },
   logo: {
-    width: 140,
-    height: 140,
-    marginBottom: 16,
+    width: 130,
+    height: 130,
+    tintColor: YELLOW,
   },
   textBlock: {
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 40,
   },
   title: {
     color: YELLOW,
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: '400',
     textAlign: 'center',
     marginBottom: 0,
+    lineHeight: 38,
   },
   italic: {
     fontStyle: 'italic',
@@ -76,73 +90,76 @@ const styles = StyleSheet.create({
   },
   accessible: {
     color: YELLOW,
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 12,
+    marginBottom: 20,
   },
   subtitle: {
     color: YELLOW,
-    fontSize: 16,
+    fontSize: 18,
     textAlign: 'center',
-    marginTop: 8,
     fontWeight: '400',
+    lineHeight: 24,
   },
   dotsContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 8,
-    marginBottom: 8,
+    marginTop: 20,
   },
   dot: {
-    width: 16,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#333',
-    marginHorizontal: 4,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#444',
+    marginHorizontal: 6,
   },
   dotActive: {
-    width: 24,
-    height: 6,
-    borderRadius: 3,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
     backgroundColor: YELLOW,
-    marginHorizontal: 4,
+    marginHorizontal: 6,
+  },
+  buttonSection: {
+    flex: 0.12,
+    backgroundColor: YELLOW,
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 15,
+    paddingBottom: 25,
   },
   buttonRow: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    paddingHorizontal: 24,
-    paddingBottom: 40,
-    paddingTop: 8,
-    backgroundColor: 'transparent',
   },
   signupBtn: {
     backgroundColor: WHITE,
-    borderRadius: 24,
-    paddingVertical: 12,
-    paddingHorizontal: 28,
-    marginRight: 8,
+    borderRadius: 25,
+    paddingVertical: 15,
+    paddingHorizontal: 40,
+    flex: 0.45,
+    alignItems: 'center',
   },
   signupText: {
     color: BLACK,
-    fontWeight: '500',
-    fontSize: 18,
+    fontWeight: '600',
+    fontSize: 16,
   },
   loginBtn: {
     backgroundColor: BLACK,
-    borderRadius: 24,
-    paddingVertical: 12,
-    paddingHorizontal: 28,
-    marginLeft: 8,
-    borderWidth: 2,
-    borderColor: WHITE,
+    borderRadius: 25,
+    paddingVertical: 15,
+    paddingHorizontal: 40,
+    flex: 0.45,
+    alignItems: 'center',
   },
   loginText: {
     color: WHITE,
-    fontWeight: '500',
-    fontSize: 18,
+    fontWeight: '600',
+    fontSize: 16,
   },
 }); 
