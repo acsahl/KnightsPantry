@@ -12,6 +12,12 @@ import {
   Dimensions,
 } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
+import { auth } from '../scripts/firebase';
+
+
+ // ✅ adjust if your path isw different
+import { signInWithEmailAndPassword } from 'firebase/auth';
+
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
@@ -19,6 +25,17 @@ export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
+
+  const handleLogin = async () => {
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    alert("✅ Logged in!");
+    router.push('/home'); // Go to home screen on success
+  } catch (err: any) {
+
+    alert("❌ " + err.message);
+  }
+};
 
   return (
     <>
@@ -61,9 +78,10 @@ export default function LoginScreen() {
               secureTextEntry
             />
             
-            <TouchableOpacity style={styles.signInButton} onPress={() => router.push('/home')}>
-              <Text style={styles.signInButtonText}>Log In</Text>
-            </TouchableOpacity>
+            <TouchableOpacity style={styles.signInButton} onPress={handleLogin}>
+  <Text style={styles.signInButtonText}>Log In</Text>
+</TouchableOpacity>
+
           </View>
         </View>
       </KeyboardAvoidingView>

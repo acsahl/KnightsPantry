@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, SafeAreaView, KeyboardAvoidingView, Platform } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../scripts/firebase'; // or wherever your firebase.js is located
+
 
 export default function SignUpScreen() {
   const router = useRouter();
@@ -10,6 +13,16 @@ export default function SignUpScreen() {
   const [ucfId, setUcfId] = useState('');
   const [password, setPassword] = useState('');
 
+  const handleSignUp = async () => {
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      alert('✅ Account created!');
+      router.replace('/home'); // Navigate to home on success
+    } catch (error: any) {
+      alert('❌ ' + error.message);
+    }
+  };
+  
   return (
     <>
       <Stack.Screen options={{ title: 'Sign Up', headerShown: true }} />
@@ -30,7 +43,8 @@ export default function SignUpScreen() {
             <Text style={styles.label}>Password</Text>
             <TextInput style={styles.input} value={password} onChangeText={setPassword} placeholder="Password" placeholderTextColor="#aaa" secureTextEntry />
           </View>
-          <TouchableOpacity style={styles.signupBtn} onPress={() => router.replace('/home')}>
+          <TouchableOpacity style={styles.signupBtn} onPress={handleSignUp}>
+
             <Text style={styles.signupText}>Sign up</Text>
           </TouchableOpacity>
         </KeyboardAvoidingView>

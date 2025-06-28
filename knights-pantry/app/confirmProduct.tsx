@@ -4,6 +4,9 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import TopBar from '../components/TopBar';
 import BottomNav from '../components/BottomNav';
 import * as FileSystem from 'expo-file-system';
+import { auth } from '../scripts/firebase'; // adjust if path is different
+import { getFirestore, collection, addDoc } from 'firebase/firestore';
+
 
 const YELLOW = '#FFD600';
 const BLACK = '#000';
@@ -11,23 +14,33 @@ const WHITE = '#fff';
 
 export default function ConfirmProductPage() {
   const router = useRouter();
+  const db = getFirestore();
+
   const { title, description, image } = useLocalSearchParams();
   const [saving, setSaving] = useState(false);
 
   const handleConfirm = async () => {
     setSaving(true);
-    const item = { title, description, date: new Date().toISOString() };
-    const fileUri = FileSystem.documentDirectory + 'donatedItems.json';
+  
     try {
-      let items = [];
-      const fileInfo = await FileSystem.getInfoAsync(fileUri);
-      if (fileInfo.exists) {
-        const content = await FileSystem.readAsStringAsync(fileUri);
-        items = JSON.parse(content);
+      const user = auth.currentUser;
+      if (!user) {
+        Alert.alert('Not logged in', 'You must be logged in to confirm items.');
+        setSaving(false);
+        return;
       }
-      items.push(item);
-      await FileSystem.writeAsStringAsync(fileUri, JSON.stringify(items, null, 2));
-      Alert.alert('Item added!', 'The item has been added to donatedItems.json.', [
+  
+      const item = {
+        title,
+        description,
+        image: image || '',
+        date: new Date().toISOString(),
+        userId: user.uid,
+      };
+  
+      await addDoc(collection(db, 'donatedItems'), item);
+  
+      Alert.alert('Item added!', 'Your item was saved to Firestore.', [
         { text: 'OK', onPress: () => router.replace('/home') }
       ]);
     } catch (e) {
@@ -36,6 +49,7 @@ export default function ConfirmProductPage() {
       setSaving(false);
     }
   };
+  
 
   return (
     <SafeAreaView style={styles.safeArea}>
