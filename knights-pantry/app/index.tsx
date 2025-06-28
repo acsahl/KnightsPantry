@@ -1,34 +1,39 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, SafeAreaView } from 'react-native';
+import { Stack, useRouter } from 'expo-router';
 
 export default function HomeScreen() {
+  const router = useRouter();
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <Image source={require('@/assets/images/ucflogo.png')} style={styles.logo} resizeMode="contain" />
-        <View style={styles.textBlock}>
-          <Text style={styles.title}>
-            Making <Text style={styles.italic}>Knights{"\n"}Pantry</Text>
-          </Text>
-          <Text style={styles.accessible}>accessible</Text>
-          <Text style={styles.subtitle}>
-            with a shopping{"\n"}catalog to meet every{"\n"}students' need
-          </Text>
+    <>
+      <Stack.Screen options={{ headerShown: false }} />
+      <SafeAreaView style={styles.container}>
+        <View style={styles.content}>
+          <Image source={require('@/assets/images/ucflogo.png')} style={styles.logo} resizeMode="contain" />
+          <View style={styles.textBlock}>
+            <Text style={styles.title}>
+              Making <Text style={styles.italic}>Knights{"\n"}Pantry</Text>
+            </Text>
+            <Text style={styles.accessible}>accessible</Text>
+            <Text style={styles.subtitle}>
+              with a shopping{"\n"}catalog to meet every{"\n"}students' need
+            </Text>
+          </View>
+          <View style={styles.dotsContainer}>
+            <View style={styles.dotActive} />
+            <View style={styles.dot} />
+          </View>
         </View>
-        <View style={styles.dotsContainer}>
-          <View style={styles.dotActive} />
-          <View style={styles.dot} />
+        <View style={styles.buttonRow}>
+          <TouchableOpacity style={styles.signupBtn} onPress={() => router.push('/signup')}>
+            <Text style={styles.signupText}>Sign up</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.loginBtn}>
+            <Text style={styles.loginText}>Log in</Text>
+          </TouchableOpacity>
         </View>
-      </View>
-      <View style={styles.buttonRow}>
-        <TouchableOpacity style={styles.signupBtn}>
-          <Text style={styles.signupText}>Sign up</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.loginBtn}>
-          <Text style={styles.loginText}>Log in</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </>
   );
 }
 
