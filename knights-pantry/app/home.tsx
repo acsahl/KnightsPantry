@@ -15,11 +15,11 @@ const SCREEN_HEIGHT = Dimensions.get('window').height;
 type Category = { label: string; icon: keyof typeof FontAwesome.glyphMap };
 
 const categories: Category[] = [
-  { label: 'Toiletries', icon: 'archive' },
-  { label: 'Home Goods', icon: 'archive' },
-  { label: 'School Supplies', icon: 'archive' },
-  { label: 'Clothing', icon: 'archive' },
-  { label: 'Other', icon: 'archive' },
+  { label: 'Toiletries', icon: 'bath' },
+  { label: 'Home Goods', icon: 'home' },
+  { label: 'School Supplies', icon: 'pencil' },
+  { label: 'Clothing', icon: 'shopping-bag' },
+  { label: 'Other', icon: 'ellipsis-h' },
   { label: 'Food', icon: 'cutlery' },
 ];
 

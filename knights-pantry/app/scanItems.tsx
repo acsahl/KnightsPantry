@@ -1,9 +1,10 @@
-import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, Alert } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { MaterialIcons, Feather, Ionicons } from '@expo/vector-icons';
 import TopBar from '../components/TopBar';
 import BottomNav from '../components/BottomNav';
+import { BarCodeScanner } from 'expo-barcode-scanner';
 
 const YELLOW = '#FFD600';
 const BLACK = '#000';
@@ -11,6 +12,31 @@ const WHITE = '#fff';
 
 export default function ScanItemsPage() {
   const router = useRouter();
+  const [hasPermission, setHasPermission] = useState<null | boolean>(null);
+  const [scanned, setScanned] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await BarCodeScanner.requestPermissionsAsync();
+      setHasPermission(status === 'granted');
+    })();
+  }, []);
+
+  const handleBarCodeScanned = ({ data }: { data: string }) => {
+    setScanned(true);
+    Alert.alert('Scanned barcode', data, [
+      { text: 'OK', onPress: () => setScanned(false) }
+    ]);
+    // Here you could look up the product or save the data
+  };
+
+  if (hasPermission === null) {
+    return <View style={styles.center}><Text>Requesting camera permission...</Text></View>;
+  }
+  if (hasPermission === false) {
+    return <View style={styles.center}><Text>No access to camera</Text></View>;
+  }
+
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
@@ -38,10 +64,15 @@ export default function ScanItemsPage() {
           </View>
 
           {/* Heading */}
-          <Text style={styles.heading}>Scan your{"\n"}item</Text>
+          <Text style={styles.heading}>Scan Items</Text>
 
           {/* Gray Rectangle Placeholder */}
-          <View style={styles.scannerPlaceholder} />
+          <View style={styles.cameraBox}>
+            <BarCodeScanner
+              onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+              style={StyleSheet.absoluteFillObject}
+            />
+          </View>
         </View>
 
         {/* Bottom Nav Bar */}
@@ -103,18 +134,24 @@ const styles = StyleSheet.create({
   heading: {
     color: WHITE,
     fontSize: 28,
-    fontWeight: '400',
-    marginBottom: 24,
+    fontWeight: 'bold',
+    marginBottom: 18,
     marginTop: 10,
     lineHeight: 32,
   },
-  scannerPlaceholder: {
-    width: '100%',
-    aspectRatio: 1,
-    backgroundColor: '#D9D9D9',
-    borderRadius: 8,
-    alignSelf: 'center',
-    marginTop: 8,
-    marginBottom: 16,
+  cameraBox: {
+    flex: 1,
+    borderRadius: 18,
+    overflow: 'hidden',
+    backgroundColor: '#222',
+    marginBottom: 24,
+    minHeight: 320,
+    maxHeight: 400,
+  },
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: BLACK,
   },
 }); 
