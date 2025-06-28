@@ -1,165 +1,137 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Image } from 'react-native';
-import { Stack, useRouter } from 'expo-router';
-
-export default function HomeScreen() {
-  const router = useRouter();
-  return (
-    <>
-      <Stack.Screen options={{ headerShown: false }} />
-      <SafeAreaView style={styles.container}>
-        <View style={styles.content}>
-          <View style={styles.logoContainer}>
-            <Image source={require('@/assets/images/ucflogo.png')} style={styles.logo} resizeMode="contain" />
-          </View>
-          <View style={styles.textBlock}>
-            <Text style={styles.title}>
-              Making <Text style={styles.italic}>Knights{"\n"}Pantry</Text>
-            </Text>
-            <Text style={styles.accessible}>accessible</Text>
-            <Text style={styles.subtitle}>
-              with a shopping{"\n"}catalog to meet every{"\n"}students' need
-            </Text>
-          </View>
-          <View style={styles.dotsContainer}>
-            <View style={styles.dotActive} />
-            <View style={styles.dot} />
-          </View>
-        </View>
-        <View style={styles.buttonSection}>
-          <View style={styles.buttonRow}>
-            <TouchableOpacity style={styles.signupBtn} onPress={() => router.push('/signup')}>
-              <Text style={styles.signupText}>Sign up</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.loginBtn} onPress={() => router.push('/login')}>
-              <Text style={styles.loginText}>Log in</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </SafeAreaView>
-    </>
-  );
-}
+import { View, Text, StatusBar, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { useRouter } from 'expo-router';
 
 const YELLOW = '#FFD600';
 const BLACK = '#000';
-const WHITE = '#fff';
+
+export default function IndexScreen() {
+  const router = useRouter();
+  return (
+    <View style={{ flex: 1, backgroundColor: BLACK }}>
+      <StatusBar backgroundColor={BLACK} barStyle="light-content" />
+      <View style={styles.container}>
+        <View style={styles.logoContainer}>
+          <Image source={require('../assets/images/ucflogo.png')} style={styles.logo} />
+        </View>
+        <Text style={styles.title}>Making <Text style={styles.titleItalic}>Knights Pantry</Text> <Text style={styles.titleBold}>accessible</Text></Text>
+        <Text style={styles.subtitle}>with a shopping{"\n"}catalog to meet every{"\n"}students' need</Text>
+        <View style={styles.dotsRow}>
+          <View style={styles.dotActive} />
+          <View style={styles.dotInactive} />
+        </View>
+        <View style={styles.bottomSection}>
+          <TouchableOpacity style={styles.signupBtn} onPress={() => router.push('/signup')}>
+            <Text style={styles.signupText}>Sign up</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.loginBtn} onPress={() => router.push('/login')}>
+            <Text style={styles.loginText}>Log in</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: YELLOW,
-  },
-  content: {
-    flex: 0.88,
     backgroundColor: BLACK,
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
-    justifyContent: 'center',
     alignItems: 'center',
-    width: '100%',
-    paddingHorizontal: 20,
+    justifyContent: 'flex-end',
   },
   logoContainer: {
-    width: 120,
-    height: 120,
-    justifyContent: 'center',
+    marginBottom: 32,
     alignItems: 'center',
-    marginBottom: 30,
   },
   logo: {
-    width: 130,
-    height: 130,
-    tintColor: YELLOW,
-  },
-  textBlock: {
-    alignItems: 'center',
-    marginBottom: 40,
+    width: 160,
+    height: 160,
+    resizeMode: 'contain',
   },
   title: {
     color: YELLOW,
     fontSize: 32,
     fontWeight: '400',
     textAlign: 'center',
-    marginBottom: 0,
-    lineHeight: 38,
+    marginBottom: 8,
   },
-  italic: {
+  titleItalic: {
     fontStyle: 'italic',
     fontWeight: '500',
-  },
-  accessible: {
     color: YELLOW,
-    fontSize: 32,
+  },
+  titleBold: {
     fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 20,
+    color: YELLOW,
   },
   subtitle: {
     color: YELLOW,
     fontSize: 18,
     textAlign: 'center',
-    fontWeight: '400',
-    lineHeight: 24,
+    marginBottom: 24,
   },
-  dotsContainer: {
+  dotsRow: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 20,
-  },
-  dot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: '#444',
-    marginHorizontal: 6,
+    marginBottom: 32,
   },
   dotActive: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
+    width: 14,
+    height: 14,
+    borderRadius: 7,
     backgroundColor: YELLOW,
-    marginHorizontal: 6,
+    borderWidth: 2,
+    borderColor: BLACK,
+    marginHorizontal: 4,
   },
-  buttonSection: {
-    flex: 0.12,
+  dotInactive: {
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    backgroundColor: '#222',
+    borderWidth: 2,
+    borderColor: BLACK,
+    marginHorizontal: 4,
+  },
+  bottomSection: {
+    width: '100%',
     backgroundColor: YELLOW,
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 15,
-    paddingBottom: 25,
-  },
-  buttonRow: {
+    borderTopLeftRadius: 40,
+    borderTopRightRadius: 40,
+    paddingVertical: 32,
+    paddingHorizontal: 24,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
   },
   signupBtn: {
-    backgroundColor: WHITE,
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 40,
-    flex: 0.45,
+    flex: 1,
+    backgroundColor: '#fff',
+    borderRadius: 30,
+    paddingVertical: 16,
     alignItems: 'center',
+    marginRight: 8,
   },
   signupText: {
     color: BLACK,
-    fontWeight: '600',
-    fontSize: 16,
+    fontWeight: 'bold',
+    fontSize: 18,
   },
   loginBtn: {
+    flex: 1,
     backgroundColor: BLACK,
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 40,
-    flex: 0.45,
+    borderRadius: 30,
+    paddingVertical: 16,
     alignItems: 'center',
+    marginLeft: 8,
   },
   loginText: {
-    color: WHITE,
-    fontWeight: '600',
-    fontSize: 16,
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 18,
   },
 }); 
