@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, FlatList } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { MaterialIcons, Feather, Ionicons } from '@expo/vector-icons';
+import TopBar from '../components/TopBar';
+import BottomNav from '../components/BottomNav';
 import ProductCard from '../components/ProductCard';
 import exampleProducts from '../assets/exampleProducts.json';
 
@@ -41,30 +43,14 @@ export default function ToiletriesPage() {
             data={(exampleProducts as any[]).filter(p => p.category === 'Toiletries')}
             keyExtractor={(_, idx) => idx.toString()}
             renderItem={({ item }) => (
-              <ProductCard title={item.title} description={item.description} />
+              <ProductCard title={item.title} description={item.description} category={item.category} />
             )}
             style={{ marginTop: 10 }}
             contentContainerStyle={{ paddingBottom: 20 }}
           />
         </View>
         {/* Bottom Nav Bar */}
-        <View style={styles.bottomNav}>
-          <TouchableOpacity style={styles.navBtn} onPress={() => router.replace('/home')}>
-            <View style={styles.navIconCircle}>
-              <Ionicons name="home" size={22} color={BLACK} />
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navBtn} onPress={() => router.replace('/donation')}>
-            <View style={styles.navIconCircle}>
-              <Ionicons name="gift" size={22} color={BLACK} />
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navBtn}>
-            <View style={styles.navIconCircle}>
-              <Ionicons name="cart" size={22} color={BLACK} />
-            </View>
-          </TouchableOpacity>
-        </View>
+        <BottomNav />
       </SafeAreaView>
     </>
   );
@@ -118,36 +104,5 @@ const styles = StyleSheet.create({
   },
   iconBtn: {
     marginLeft: 16,
-  },
-  bottomNav: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.98)',
-    borderRadius: 28,
-    marginHorizontal: 16,
-    marginBottom: 16,
-    height: 64,
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 2,
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  navBtn: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  navIconCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: YELLOW,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 }); 

@@ -1,7 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { MaterialIcons, Feather, Ionicons, FontAwesome } from '@expo/vector-icons';
+import TopBar from '../components/TopBar';
+import BottomNav from '../components/BottomNav';
 
 const YELLOW = '#FFD600';
 const BLACK = '#000';
@@ -56,24 +58,8 @@ export default function DonationPage() {
           </View>
         </View>
 
-        {/* Bottom Nav Bar (same as home) */}
-        <View style={styles.bottomNav}>
-          <TouchableOpacity style={styles.navBtn} onPress={() => router.replace('/home')}>
-            <View style={styles.navIconCircle}>
-              <Ionicons name="home" size={22} color={BLACK} />
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navBtn}>
-            <View style={styles.navIconCircle}>
-              <Ionicons name="gift" size={22} color={BLACK} />
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navBtn}>
-            <View style={styles.navIconCircle}>
-              <Ionicons name="cart" size={22} color={BLACK} />
-            </View>
-          </TouchableOpacity>
-        </View>
+        {/* Bottom Nav Bar */}
+        <BottomNav />
       </SafeAreaView>
     </>
   );
@@ -168,36 +154,5 @@ const styles = StyleSheet.create({
     color: BLACK,
     fontSize: 15,
     fontWeight: '400',
-  },
-  bottomNav: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.98)',
-    borderRadius: 28,
-    marginHorizontal: 16,
-    marginBottom: 16,
-    height: 64,
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 2,
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  navBtn: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  navIconCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: YELLOW,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 }); 

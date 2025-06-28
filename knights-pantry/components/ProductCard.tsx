@@ -1,29 +1,34 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
 
 interface ProductCardProps {
   title: string;
   description: string;
+  category?: string;
 }
 
-export default function ProductCard({ title, description }: ProductCardProps) {
+export default function ProductCard({ title, description, category }: ProductCardProps) {
+  const router = useRouter();
   return (
-    <View style={styles.card}>
-      <View style={styles.leftSection}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.description}>{description}</Text>
-      </View>
-      <View style={styles.rightSection}>
-        {/* Placeholder for icons */}
-        <View style={styles.iconRow}>
-          <View style={styles.iconPlaceholder} />
-          <View style={styles.iconPlaceholder} />
+    <TouchableOpacity onPress={() => router.push({ pathname: '/productDetail', params: { title, description, category } })} activeOpacity={0.8}>
+      <View style={styles.card}>
+        <View style={styles.leftSection}>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.description}>{description}</Text>
         </View>
-        <View style={styles.iconRow}>
-          <View style={styles.iconPlaceholder} />
+        <View style={styles.rightSection}>
+          {/* Placeholder for icons */}
+          <View style={styles.iconRow}>
+            <View style={styles.iconPlaceholder} />
+            <View style={styles.iconPlaceholder} />
+          </View>
+          <View style={styles.iconRow}>
+            <View style={styles.iconPlaceholder} />
+          </View>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
