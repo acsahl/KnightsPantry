@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Dimensions } from 'react-native';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { MaterialIcons, Feather, FontAwesome, Ionicons } from '@expo/vector-icons';
 
 const YELLOW = '#FFD600';
@@ -19,6 +19,7 @@ const categories: Category[] = [
 ];
 
 export default function HomePage() {
+  const router = useRouter();
   return (
     <>
       <Stack.Screen options={{ title: 'Home', headerShown: false }} />
@@ -91,7 +92,7 @@ export default function HomePage() {
               <Ionicons name="home" size={22} color={BLACK} />
             </View>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.navBtn}>
+          <TouchableOpacity style={styles.navBtn} onPress={() => router.push('/donation')}>
             <View style={styles.navIconCircle}>
               <Ionicons name="gift" size={22} color={BLACK} />
             </View>
