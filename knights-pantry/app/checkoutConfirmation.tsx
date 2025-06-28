@@ -3,12 +3,14 @@ import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
 import TopBar from '../components/TopBar';
 import BottomNav from '../components/BottomNav';
 import { Ionicons } from '@expo/vector-icons';
+import { useLocalSearchParams } from 'expo-router';
 
 const YELLOW = '#FFD600';
 const BLACK = '#000';
 const WHITE = '#fff';
 
 export default function CheckoutConfirmation() {
+  const { selectedTime } = useLocalSearchParams<{ selectedTime: string }>();
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -23,7 +25,7 @@ export default function CheckoutConfirmation() {
           Knights Pantry{"\n"}
           app! Be sure to come to{"\n"}
           pick up your items at{"\n"}
-          the reported time.
+          {selectedTime || 'your confirmed time'}.
         </Text>
       </View>
       <BottomNav />
