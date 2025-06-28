@@ -127,5 +127,31 @@
     "title": "First Aid Kit",
     "category": "Other",
     "description": "Basic first aid kit for emergencies."
+  },
+
+  {
+    "title": "Canned Beans",
+    "category": "Food",
+    "description": "Protein-rich canned beans, ready to eat or cook."
+  },
+  {
+    "title": "Rice",
+    "category": "Food",
+    "description": "Bag of long-grain white rice."
+  },
+  {
+    "title": "Peanut Butter",
+    "category": "Food",
+    "description": "Creamy peanut butter, 16oz jar."
+  },
+  {
+    "title": "Pasta",
+    "category": "Food",
+    "description": "Box of whole wheat pasta."
+  },
+  {
+    "title": "Cereal",
+    "category": "Food",
+    "description": "Box of multigrain breakfast cereal."
   }
 ] 
