@@ -24,7 +24,6 @@
     "category": "Toiletries",
     "description": "Long-lasting deodorant stick."
   },
-
   {
     "title": "Bath Towel",
     "category": "Home Goods",
@@ -50,7 +49,6 @@
     "category": "Home Goods",
     "description": "Detergent for washing clothes."
   },
-
   {
     "title": "Notebook",
     "category": "School Supplies",
@@ -76,7 +74,6 @@
     "category": "School Supplies",
     "description": "Scientific calculator for math and science classes."
   },
-
   {
     "title": "T-shirt",
     "category": "Clothing",
@@ -102,7 +99,6 @@
     "category": "Clothing",
     "description": "Pack of ankle socks."
   },
-
   {
     "title": "Umbrella",
     "category": "Other",
@@ -128,7 +124,6 @@
     "category": "Other",
     "description": "Basic first aid kit for emergencies."
   },
-
   {
     "title": "Canned Beans",
     "category": "Food",
@@ -153,5 +148,15 @@
     "title": "Cereal",
     "category": "Food",
     "description": "Box of multigrain breakfast cereal."
+  },
+  {
+    "title": "Red Bull Energy Drink  8.4 fl oz Can",
+    "category": "Other",
+    "description": "Red Bull Energy Drink gives you Wiiings whenever you need them. Red Bull Energy Drink is a lightly carbonated energy drink with a blend of caffeine  taurine  B vitamins  real sugar and water  along with the taste of dragonfruit.* With 110 calories per 8.4 fl oz can  Red Bull is great for any occasion. While aiming for great heights during your workday  in your workouts or when gaming  why not crack open a refreshing can of Red Bull? Drink Red Bull straight from the can or enjoy in a glass over ice. This can of Red Bull will keep you stocked for any occasion  whether it?s hanging with friends  watching the game or going on a road trip. Be ready for the big moments with a can of Red Bull. Store these cans of Red Bull at room temperature or toss them in the fridge. Red Bull gives you Wiiings. Always check can labels for most updated product nutritional and ingredient information. Calcium and sugars values declared on labels may vary slightly depending on production locations."
+  },
+  {
+    "title": "SYNERGY KOMBUCHA",
+    "category": "Food",
+    "description": "INGREDIENTS: G.T.'S ORGANIC RAW KOMBUCHA*, MANGO PUREE* AND 100% PURE LOVE!!!"
   }
-] 
+]

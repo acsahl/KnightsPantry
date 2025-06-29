@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
+const fs = require('fs').promises;
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -34,6 +36,50 @@ const userSchema = new mongoose.Schema({
   }]
 });
 const User = mongoose.model('User', userSchema);
+
+// Function to add approved item to exampleProducts.json
+async function addToExampleProducts(title, description, category) {
+  try {
+    console.log('Attempting to add item to exampleProducts.json:', { title, description, category });
+    
+    const filePath = path.join(__dirname, '../knights-pantry/assets/exampleProducts.json');
+    console.log('File path:', filePath);
+    
+    // Check if file exists
+    try {
+      await fs.access(filePath);
+      console.log('File exists and is accessible');
+    } catch (error) {
+      console.error('File does not exist or is not accessible:', error);
+      return;
+    }
+    
+    const fileContent = await fs.readFile(filePath, 'utf8');
+    console.log('File content length:', fileContent.length);
+    
+    const products = JSON.parse(fileContent);
+    console.log('Current products count:', products.length);
+    
+    // Add the new approved item
+    const newItem = {
+      title: title,
+      category: category,
+      description: description
+    };
+    
+    products.push(newItem);
+    console.log('Added new item, total products now:', products.length);
+    
+    // Write back to file
+    const updatedContent = JSON.stringify(products, null, 2);
+    await fs.writeFile(filePath, updatedContent);
+    console.log(`Successfully added approved item "${title}" to exampleProducts.json`);
+  } catch (error) {
+    console.error('Error updating exampleProducts.json:', error);
+    console.error('Error details:', error.message);
+    console.error('Error stack:', error.stack);
+  }
+}
 
 // Connect to MongoDB
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -188,17 +234,47 @@ app.get('/api/admin/donated-items', authenticateToken, requireAdmin, async (req,
 // Admin: approve donated item
 app.put('/api/admin/donated-items/:itemId/approve', authenticateToken, requireAdmin, async (req, res) => {
   try {
+    console.log('Approval request received for item ID:', req.params.itemId);
+    
+    // First, find the item to get its details
+    const user = await User.findOne({ 'donatedItems._id': req.params.itemId });
+    if (!user) {
+      console.log('User not found for item ID:', req.params.itemId);
+      return res.status(404).json({ error: 'Item not found' });
+    }
+    
+    const item = user.donatedItems.id(req.params.itemId);
+    if (!item) {
+      console.log('Item not found in user donations:', req.params.itemId);
+      return res.status(404).json({ error: 'Item not found' });
+    }
+    
+    console.log('Found item to approve:', {
+      title: item.title,
+      description: item.description,
+      category: item.category
+    });
+    
+    // Update the item status
     const result = await User.updateOne(
       { 'donatedItems._id': req.params.itemId },
       { $set: { 'donatedItems.$.status': 'approved' } }
     );
     
     if (result.modifiedCount === 0) {
+      console.log('Failed to update item status');
       return res.status(404).json({ error: 'Item not found' });
     }
     
+    console.log('Item status updated successfully, now adding to exampleProducts.json');
+    
+    // Add to exampleProducts.json
+    await addToExampleProducts(item.title, item.description, item.category);
+    
+    console.log('Approval process completed successfully');
     res.json({ success: true });
   } catch (err) {
+    console.error('Error in approval process:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });

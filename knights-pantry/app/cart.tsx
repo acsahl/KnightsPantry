@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, FlatList, Scrol
 import TopBar from '../components/TopBar';
 import BottomNav from '../components/BottomNav';
 import { useCart } from '../context/CartContext';
+import { useUser } from '../context/UserContext';
 import { useRouter, Stack } from 'expo-router';
 
 const YELLOW = '#FFD600';
@@ -104,6 +105,7 @@ const generateScheduleOptions = () => {
 
 export default function CartPage() {
   const { cartItems, removeFromCart, setSelectedPickupTime } = useCart();
+  const { user } = useUser();
   const [times, setTimes] = useState(generateTimeSlots());
   const [selectedTime, setSelectedTime] = useState(times[0]);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
@@ -152,60 +154,67 @@ export default function CartPage() {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <SafeAreaView style={styles.safeArea}>
-        <View style={styles.container}>
-          <TopBar onLogout={() => {}} />
-          <Text style={styles.heading}>Confirm items{"\n"}for <Text style={styles.bold}>checkout.</Text></Text>
-          <View style={styles.cartBox}>
-            <FlatList
-              data={cartItems}
-              keyExtractor={(_, idx) => idx.toString()}
-              renderItem={({ item, index }) => (
-                <View style={styles.cartItem}>
-                  <View style={styles.cartItemContent}>
-                    <View style={styles.cartItemHeader}>
-                      <Text style={styles.cartItemTitle}>{item.title}</Text>
-                      <TouchableOpacity 
-                        style={styles.removeButton}
-                        onPress={() => removeFromCart(index)}
-                      >
-                        <Text style={styles.removeButtonText}>×</Text>
-                      </TouchableOpacity>
+        <TopBar onLogout={() => {}} user={user || {}} />
+        <ScrollView 
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.container}>
+            <Text style={styles.heading}>Confirm items{"\n"}for <Text style={styles.bold}>checkout.</Text></Text>
+            <View style={styles.cartBox}>
+              <FlatList
+                data={cartItems}
+                keyExtractor={(_, idx) => idx.toString()}
+                renderItem={({ item, index }) => (
+                  <View style={styles.cartItem}>
+                    <View style={styles.cartItemContent}>
+                      <View style={styles.cartItemHeader}>
+                        <Text style={styles.cartItemTitle}>{item.title}</Text>
+                        <TouchableOpacity 
+                          style={styles.removeButton}
+                          onPress={() => removeFromCart(index)}
+                        >
+                          <Text style={styles.removeButtonText}>×</Text>
+                        </TouchableOpacity>
+                      </View>
+                      <Text style={styles.cartItemDesc}>{item.description}</Text>
                     </View>
-                    <Text style={styles.cartItemDesc}>{item.description}</Text>
                   </View>
-                </View>
-              )}
-              ListEmptyComponent={<Text style={{ color: '#888', padding: 12 }}>No items in cart.</Text>}
-            />
+                )}
+                ListEmptyComponent={<Text style={{ color: '#888', padding: 12 }}>No items in cart.</Text>}
+                scrollEnabled={false}
+              />
+            </View>
+            <Text style={styles.selectTime}>Select a time</Text>
+            <View style={styles.timeContainer}>
+              {mainButtons.map((time) => {
+                const isScheduleButton = time === 'Schedule';
+                const isCustomTimeSelected = !times.includes(selectedTime) && selectedTime !== 'ASAP';
+                const isSelected = selectedTime === time || (isCustomTimeSelected && isScheduleButton) || (showScheduleModal && isScheduleButton);
+                const displayText = isScheduleButton && isCustomTimeSelected ? selectedTime : time;
+                
+                return (
+                  <TouchableOpacity
+                    key={time}
+                    style={[styles.timeBtn, isSelected && styles.timeBtnSelected]}
+                    onPress={() => handleTimeSelect(time)}
+                  >
+                    <Text style={[styles.timeBtnText, isSelected && styles.timeBtnTextSelected]}>
+                      {displayText}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+            <TouchableOpacity style={styles.checkoutBtn} onPress={() => router.replace({
+              pathname: '/checkoutConfirmation',
+              params: { selectedTime }
+            })}>
+              <Text style={styles.checkoutText}>Checkout</Text>
+            </TouchableOpacity>
           </View>
-          <Text style={styles.selectTime}>Select a time</Text>
-          <View style={styles.timeContainer}>
-            {mainButtons.map((time) => {
-              const isScheduleButton = time === 'Schedule';
-              const isCustomTimeSelected = !times.includes(selectedTime) && selectedTime !== 'ASAP';
-              const isSelected = selectedTime === time || (isCustomTimeSelected && isScheduleButton) || (showScheduleModal && isScheduleButton);
-              const displayText = isScheduleButton && isCustomTimeSelected ? selectedTime : time;
-              
-              return (
-                <TouchableOpacity
-                  key={time}
-                  style={[styles.timeBtn, isSelected && styles.timeBtnSelected]}
-                  onPress={() => handleTimeSelect(time)}
-                >
-                  <Text style={[styles.timeBtnText, isSelected && styles.timeBtnTextSelected]}>
-                    {displayText}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-          <TouchableOpacity style={styles.checkoutBtn} onPress={() => router.replace({
-            pathname: '/checkoutConfirmation',
-            params: { selectedTime }
-          })}>
-            <Text style={styles.checkoutText}>Checkout</Text>
-          </TouchableOpacity>
-        </View>
+        </ScrollView>
         
         {/* Schedule Time Picker Modal */}
         <Modal
@@ -442,5 +451,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: WHITE,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    padding: 20,
   },
 }); 
