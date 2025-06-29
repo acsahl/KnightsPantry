@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import TopBar from '../components/TopBar';
 import BottomNav from '../components/BottomNav';
 import { useRouter } from 'expo-router';
@@ -10,9 +10,12 @@ const YELLOW = '#FFD600';
 const BLACK = '#000';
 const WHITE = '#fff';
 
+const CATEGORIES = ['Food', 'Clothing', 'School Supplies', 'Toiletries', 'Other'];
+
 export default function ManualItemInput() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('Other');
   const router = useRouter();
   const { user, token } = useUser();
 
@@ -37,6 +40,7 @@ export default function ManualItemInput() {
         body: JSON.stringify({
           title,
           description: description || undefined,
+          category: selectedCategory,
           userId: user._id,
         }),
       });
@@ -45,6 +49,7 @@ export default function ManualItemInput() {
         Alert.alert('Success', 'Thank you for your donation! It will be reviewed by an admin.');
         setTitle('');
         setDescription('');
+        setSelectedCategory('Other');
         router.replace('/home');
       } else {
         const data = await response.json();
@@ -57,7 +62,7 @@ export default function ManualItemInput() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
         <TopBar user={user || {}} onLogout={() => router.replace('/login')} />
         <Text style={styles.heading}>Donate an Item</Text>
         <View style={styles.formGroup}>
@@ -71,7 +76,29 @@ export default function ManualItemInput() {
           />
         </View>
         <View style={styles.formGroup}>
-          <Text style={styles.label}>Description</Text>
+          <Text style={styles.label}>Category</Text>
+          <View style={styles.categoryContainer}>
+            {CATEGORIES.map((category) => (
+              <TouchableOpacity
+                key={category}
+                style={[
+                  styles.categoryButton,
+                  selectedCategory === category && styles.selectedCategoryButton
+                ]}
+                onPress={() => setSelectedCategory(category)}
+              >
+                <Text style={[
+                  styles.categoryButtonText,
+                  selectedCategory === category && styles.selectedCategoryButtonText
+                ]}>
+                  {category}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+        <View style={styles.formGroup}>
+          <Text style={styles.label}>Description (Optional)</Text>
           <TextInput 
             style={[styles.input, styles.textArea]} 
             value={description} 
@@ -85,7 +112,7 @@ export default function ManualItemInput() {
         <TouchableOpacity style={styles.submitBtn} onPress={handleSubmit}>
           <Text style={styles.submitText}>Submit Donation</Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
       <BottomNav />
     </SafeAreaView>
   );
@@ -143,5 +170,38 @@ const styles = StyleSheet.create({
     color: BLACK,
     fontWeight: 'bold',
     fontSize: 18,
+  },
+  categoryContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: 8,
+  },
+  categoryButton: {
+    backgroundColor: WHITE,
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    minWidth: '48%',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  selectedCategoryButton: {
+    backgroundColor: YELLOW,
+  },
+  categoryButtonText: {
+    color: BLACK,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  selectedCategoryButtonText: {
+    color: BLACK,
+    fontWeight: 'bold',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    padding: 20,
   },
 }); 

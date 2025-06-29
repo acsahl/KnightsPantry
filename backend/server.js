@@ -24,6 +24,11 @@ const userSchema = new mongoose.Schema({
   donatedItems: [{
     title: String,
     description: String,
+    category: { 
+      type: String, 
+      enum: ['Food', 'Clothing', 'School Supplies', 'Toiletries', 'Other'],
+      default: 'Other'
+    },
     status: { type: String, enum: ['pending', 'approved', 'denied'], default: 'pending' },
     createdAt: { type: Date, default: Date.now }
   }]
@@ -119,7 +124,7 @@ function requireAdmin(req, res, next) {
 
 // Create donated item (add to user's donatedItems array)
 app.post('/api/donated-items', async (req, res) => {
-  const { title, description, userId } = req.body;
+  const { title, description, category, userId } = req.body;
   if (!title || !userId) return res.status(400).json({ error: 'Title and userId required' });
   
   try {
@@ -129,7 +134,15 @@ app.post('/api/donated-items', async (req, res) => {
     // Use description if provided, otherwise use a default
     const itemDescription = description || 'No description provided';
     
-    user.donatedItems.push({ title, description: itemDescription });
+    // Validate category or use default
+    const validCategories = ['Food', 'Clothing', 'School Supplies', 'Toiletries', 'Other'];
+    const itemCategory = validCategories.includes(category) ? category : 'Other';
+    
+    user.donatedItems.push({ 
+      title, 
+      description: itemDescription,
+      category: itemCategory
+    });
     await user.save();
     
     res.status(201).json({ message: 'Donated item created' });
@@ -150,6 +163,7 @@ app.get('/api/admin/donated-items', authenticateToken, requireAdmin, async (req,
           _id: item._id,
           title: item.title,
           description: item.description,
+          category: item.category,
           status: item.status,
           createdAt: item.createdAt,
           user: {

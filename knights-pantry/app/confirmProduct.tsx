@@ -10,10 +10,13 @@ const YELLOW = '#FFD600';
 const BLACK = '#000';
 const WHITE = '#fff';
 
+const CATEGORIES = ['Food', 'Clothing', 'School Supplies', 'Toiletries', 'Other'];
+
 export default function ConfirmProductPage() {
   const router = useRouter();
   const { title, description, image } = useLocalSearchParams();
   const [saving, setSaving] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('Other');
   const { user, token } = useUser();
 
   const handleConfirm = async () => {
@@ -33,6 +36,7 @@ export default function ConfirmProductPage() {
         body: JSON.stringify({
           title: String(title),
           description: description ? String(description) : undefined,
+          category: selectedCategory,
           userId: user._id,
         }),
       });
@@ -60,6 +64,30 @@ export default function ConfirmProductPage() {
         {image ? <Image source={{ uri: String(image) }} style={styles.productImage} /> : null}
         <Text style={styles.productTitle}>{title}</Text>
         <Text style={styles.productDesc}>{description}</Text>
+        
+        <View style={styles.categorySection}>
+          <Text style={styles.categoryLabel}>Select Category:</Text>
+          <View style={styles.categoryContainer}>
+            {CATEGORIES.map((category) => (
+              <TouchableOpacity
+                key={category}
+                style={[
+                  styles.categoryButton,
+                  selectedCategory === category && styles.selectedCategoryButton
+                ]}
+                onPress={() => setSelectedCategory(category)}
+              >
+                <Text style={[
+                  styles.categoryButtonText,
+                  selectedCategory === category && styles.selectedCategoryButtonText
+                ]}>
+                  {category}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+        
         <View style={styles.buttonRow}>
           <TouchableOpacity style={styles.confirmBtn} onPress={handleConfirm} disabled={saving}>
             <Text style={styles.confirmText}>{saving ? 'Saving...' : 'Yes'}</Text>
@@ -149,5 +177,40 @@ const styles = StyleSheet.create({
     color: WHITE,
     fontWeight: 'bold',
     fontSize: 18,
+  },
+  categorySection: {
+    marginBottom: 18,
+  },
+  categoryLabel: {
+    color: WHITE,
+    fontWeight: 'bold',
+    fontSize: 18,
+    marginBottom: 8,
+  },
+  categoryContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: 8,
+  },
+  categoryButton: {
+    backgroundColor: '#444',
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    minWidth: '48%',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  selectedCategoryButton: {
+    backgroundColor: YELLOW,
+  },
+  categoryButtonText: {
+    color: WHITE,
+    fontWeight: 'bold',
+    fontSize: 18,
+  },
+  selectedCategoryButtonText: {
+    color: BLACK,
   },
 }); 

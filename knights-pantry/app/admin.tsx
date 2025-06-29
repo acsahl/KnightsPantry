@@ -19,6 +19,7 @@ interface DonatedItem {
   _id: string;
   title: string;
   description: string;
+  category: string;
   user: {
     firstName: string;
     lastName: string;
@@ -128,6 +129,9 @@ export default function AdminScreen() {
         <Text style={[styles.statusBadge, styles[`status${item.status}`]]}>
           {item.status.toUpperCase()}
         </Text>
+      </View>
+      <View style={styles.categoryContainer}>
+        <Text style={styles.categoryBadge}>{item.category}</Text>
       </View>
       <Text style={styles.itemDescription}>{item.description}</Text>
       <Text style={styles.donorInfo}>
@@ -658,5 +662,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#1a1a1a',
+  },
+  categoryContainer: {
+    marginBottom: 8,
+  },
+  categoryBadge: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#666',
+    backgroundColor: '#e8f4fd',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    alignSelf: 'flex-start',
   },
 }); 
