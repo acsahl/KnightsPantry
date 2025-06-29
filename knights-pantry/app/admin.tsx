@@ -8,7 +8,8 @@ import {
   Alert,
   RefreshControl,
 } from 'react-native';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useUser } from '../context/UserContext';
 import TopBar from '../components/TopBar';
 import API_BASE_URL from '../config/api';
@@ -27,9 +28,10 @@ interface DonatedItem {
 }
 
 export default function AdminScreen() {
-  const { user, token } = useUser();
+  const { user, token, setUser, setToken } = useUser();
   const [donatedItems, setDonatedItems] = useState<DonatedItem[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+  const router = useRouter();
 
   const fetchDonatedItems = async () => {
     try {
@@ -131,11 +133,17 @@ export default function AdminScreen() {
     </View>
   );
 
+  const handleLogout = () => {
+    setUser(null);
+    setToken(null);
+    router.replace('/');
+  };
+
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.container}>
-        <TopBar user={user} />
+        <TopBar user={user || {}} onLogout={handleLogout} />
         <View style={styles.content}>
           <Text style={styles.title}>Admin Dashboard</Text>
           <Text style={styles.subtitle}>Manage Donated Items</Text>
@@ -154,6 +162,12 @@ export default function AdminScreen() {
               </View>
             }
           />
+          
+          {/* Home Button at Bottom */}
+          <TouchableOpacity style={styles.homeButton} onPress={() => router.push('/home')}>
+            <MaterialIcons name="home" size={24} color="#fff" />
+            <Text style={styles.homeButtonText}>Back to Home</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </>
@@ -279,5 +293,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     textAlign: 'center',
+  },
+  homeButton: {
+    backgroundColor: '#007bff',
+    padding: 16,
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 16,
+    marginBottom: 20,
+    marginHorizontal: 20,
+  },
+  homeButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
   },
 }); 

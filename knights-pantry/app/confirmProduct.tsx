@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import TopBar from '../components/TopBar';
 import BottomNav from '../components/BottomNav';
@@ -54,7 +54,7 @@ export default function ConfirmProductPage() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
         <TopBar user={user || {}} onLogout={() => router.replace('/login')} />
         <Text style={styles.heading}>Is this your item?</Text>
         {image ? <Image source={{ uri: String(image) }} style={styles.productImage} /> : null}
@@ -68,7 +68,7 @@ export default function ConfirmProductPage() {
             <Text style={styles.noText}>No</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </ScrollView>
       <BottomNav />
     </SafeAreaView>
   );
@@ -79,12 +79,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: BLACK,
   },
-  container: {
+  scrollView: {
     flex: 1,
     backgroundColor: BLACK,
+  },
+  scrollContent: {
     paddingHorizontal: 20,
     paddingTop: 16,
-    justifyContent: 'flex-start',
+    paddingBottom: 20,
     alignItems: 'center',
   },
   heading: {

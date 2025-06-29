@@ -37,12 +37,8 @@ export default function LoginScreen() {
         setToken(data.token);
         Alert.alert('Success', 'Logged in!');
         
-        // Route based on admin status
-        if (data.user.isAdmin) {
-          router.push('/admin');
-        } else {
-          router.push('/home');
-        }
+        // All users go to home page after login
+        router.push('/home');
       } else {
         Alert.alert('Error', data.error || 'Login failed');
       }

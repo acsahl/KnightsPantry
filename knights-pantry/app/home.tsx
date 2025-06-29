@@ -119,6 +119,14 @@ export default function HomePage() {
                   Help make an impact by clicking on the gift icon below and donating.
                 </Text>
               </View>
+
+              {/* Admin Button - Only show for admin users */}
+              {user?.isAdmin && (
+                <TouchableOpacity style={styles.adminButton} onPress={() => router.push('/admin')}>
+                  <MaterialIcons name="admin-panel-settings" size={24} color="#fff" />
+                  <Text style={styles.adminButtonText}>Admin Dashboard</Text>
+                </TouchableOpacity>
+              )}
             </>
           )}
         </View>
@@ -229,5 +237,22 @@ const styles = StyleSheet.create({
     color: BLACK,
     fontSize: 17,
     marginTop: 6,
+  },
+  adminButton: {
+    backgroundColor: '#007bff',
+    borderRadius: 28,
+    padding: 20,
+    marginHorizontal: 18,
+    marginTop: 16,
+    marginBottom: 38,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  adminButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginLeft: 8,
   },
 }); 
