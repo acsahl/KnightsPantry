@@ -21,19 +21,14 @@ const userSchema = new mongoose.Schema({
   lastName: String,
   ucfId: String,
   isAdmin: { type: Boolean, default: false },
+  donatedItems: [{
+    title: String,
+    description: String,
+    status: { type: String, enum: ['pending', 'approved', 'denied'], default: 'pending' },
+    createdAt: { type: Date, default: Date.now }
+  }]
 });
 const User = mongoose.model('User', userSchema);
-
-// Donated Item Schema
-const donatedItemSchema = new mongoose.Schema({
-  title: String,
-  description: String,
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  approved: { type: Boolean, default: false },
-  denied: { type: Boolean, default: false },
-  createdAt: { type: Date, default: Date.now },
-});
-const DonatedItem = mongoose.model('DonatedItem', donatedItemSchema);
 
 // Connect to MongoDB
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -122,13 +117,17 @@ function requireAdmin(req, res, next) {
   }).catch(() => res.status(500).json({ error: 'Server error' }));
 }
 
-// Create donated item (user must be logged in, pass userId)
+// Create donated item (add to user's donatedItems array)
 app.post('/api/donated-items', async (req, res) => {
   const { title, description, userId } = req.body;
   if (!title || !description || !userId) return res.status(400).json({ error: 'Missing fields' });
   try {
-    const item = new DonatedItem({ title, description, user: userId });
-    await item.save();
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    
+    user.donatedItems.push({ title, description });
+    await user.save();
+    
     res.status(201).json({ message: 'Donated item created' });
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
@@ -138,17 +137,47 @@ app.post('/api/donated-items', async (req, res) => {
 // Admin: list all donated items with user info
 app.get('/api/admin/donated-items', authenticateToken, requireAdmin, async (req, res) => {
   try {
-    const items = await DonatedItem.find().populate('user', 'firstName lastName email');
-    res.json(items);
+    const users = await User.find({ 'donatedItems.0': { $exists: true } }, 'firstName lastName email donatedItems');
+    
+    const allItems = [];
+    users.forEach(user => {
+      user.donatedItems.forEach(item => {
+        allItems.push({
+          _id: item._id,
+          title: item.title,
+          description: item.description,
+          status: item.status,
+          createdAt: item.createdAt,
+          user: {
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email
+          }
+        });
+      });
+    });
+    
+    // Sort by creation date (newest first)
+    allItems.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    
+    res.json(allItems);
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
   }
 });
 
 // Admin: approve donated item
-app.put('/api/admin/donated-items/:id/approve', authenticateToken, requireAdmin, async (req, res) => {
+app.put('/api/admin/donated-items/:itemId/approve', authenticateToken, requireAdmin, async (req, res) => {
   try {
-    await DonatedItem.findByIdAndUpdate(req.params.id, { approved: true, denied: false });
+    const result = await User.updateOne(
+      { 'donatedItems._id': req.params.itemId },
+      { $set: { 'donatedItems.$.status': 'approved' } }
+    );
+    
+    if (result.modifiedCount === 0) {
+      return res.status(404).json({ error: 'Item not found' });
+    }
+    
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
@@ -156,10 +185,33 @@ app.put('/api/admin/donated-items/:id/approve', authenticateToken, requireAdmin,
 });
 
 // Admin: deny donated item
-app.put('/api/admin/donated-items/:id/deny', authenticateToken, requireAdmin, async (req, res) => {
+app.put('/api/admin/donated-items/:itemId/deny', authenticateToken, requireAdmin, async (req, res) => {
   try {
-    await DonatedItem.findByIdAndUpdate(req.params.id, { approved: false, denied: true });
+    const result = await User.updateOne(
+      { 'donatedItems._id': req.params.itemId },
+      { $set: { 'donatedItems.$.status': 'denied' } }
+    );
+    
+    if (result.modifiedCount === 0) {
+      return res.status(404).json({ error: 'Item not found' });
+    }
+    
     res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// User: get their own donated items
+app.get('/api/my-donated-items', authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId, 'donatedItems');
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    
+    // Sort by creation date (newest first)
+    const sortedItems = user.donatedItems.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    
+    res.json(sortedItems);
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
   }

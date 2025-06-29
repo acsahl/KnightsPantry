@@ -2,57 +2,88 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TextInput, TouchableOpacity, Alert } from 'react-native';
 import TopBar from '../components/TopBar';
 import BottomNav from '../components/BottomNav';
-import * as FileSystem from 'expo-file-system';
 import { useRouter } from 'expo-router';
+import { useUser } from '../context/UserContext';
+import API_BASE_URL from '../config/api';
 
 const YELLOW = '#FFD600';
 const BLACK = '#000';
 const WHITE = '#fff';
 
 export default function ManualItemInput() {
-  const [item, setItem] = useState('');
+  const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const router = useRouter();
+  const { user, token } = useUser();
 
   const handleSubmit = async () => {
-    if (!item || !description) {
+    if (!title || !description) {
       Alert.alert('Please fill in all fields.');
       return;
     }
-    const log = { item, description, date: new Date().toISOString() };
-    const fileUri = FileSystem.documentDirectory + 'loggedItems.json';
+
+    if (!user?._id || !token) {
+      Alert.alert('Error', 'Please log in to donate items');
+      return;
+    }
+
     try {
-      let logs = [];
-      const fileInfo = await FileSystem.getInfoAsync(fileUri);
-      if (fileInfo.exists) {
-        const content = await FileSystem.readAsStringAsync(fileUri);
-        logs = JSON.parse(content);
+      const response = await fetch(`${API_BASE_URL}/api/donated-items`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          title,
+          description,
+          userId: user._id,
+        }),
+      });
+
+      if (response.ok) {
+        Alert.alert('Success', 'Thank you for your donation! It will be reviewed by an admin.');
+        setTitle('');
+        setDescription('');
+        router.replace('/home');
+      } else {
+        const data = await response.json();
+        Alert.alert('Error', data.error || 'Failed to submit donation');
       }
-      logs.push(log);
-      await FileSystem.writeAsStringAsync(fileUri, JSON.stringify(logs, null, 2));
-      Alert.alert('Item logged!');
-      setItem(''); setDescription('');
-      router.replace('/home');
-    } catch (e) {
-      Alert.alert('Error saving item.');
+    } catch (error) {
+      Alert.alert('Error', 'Network error. Please try again.');
     }
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <TopBar onLogout={() => {}} />
-        <Text style={styles.heading}>Manual Input</Text>
+        <TopBar user={user || {}} onLogout={() => router.replace('/login')} />
+        <Text style={styles.heading}>Donate an Item</Text>
         <View style={styles.formGroup}>
-          <Text style={styles.label}>Item</Text>
-          <TextInput style={styles.input} value={item} onChangeText={setItem} placeholder="Value" placeholderTextColor="#aaa" />
+          <Text style={styles.label}>Item Title</Text>
+          <TextInput 
+            style={styles.input} 
+            value={title} 
+            onChangeText={setTitle} 
+            placeholder="e.g., Textbooks, Clothing, Food" 
+            placeholderTextColor="#aaa" 
+          />
         </View>
         <View style={styles.formGroup}>
           <Text style={styles.label}>Description</Text>
-          <TextInput style={[styles.input, styles.textArea]} value={description} onChangeText={setDescription} placeholder="Value" placeholderTextColor="#aaa" multiline numberOfLines={3} />
+          <TextInput 
+            style={[styles.input, styles.textArea]} 
+            value={description} 
+            onChangeText={setDescription} 
+            placeholder="Describe the item you're donating..." 
+            placeholderTextColor="#aaa" 
+            multiline 
+            numberOfLines={4} 
+          />
         </View>
         <TouchableOpacity style={styles.submitBtn} onPress={handleSubmit}>
-          <Text style={styles.submitText}>Submit</Text>
+          <Text style={styles.submitText}>Submit Donation</Text>
         </TouchableOpacity>
       </View>
       <BottomNav />

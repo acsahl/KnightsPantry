@@ -2,69 +2,83 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TextInput, TouchableOpacity, Alert } from 'react-native';
 import TopBar from '../components/TopBar';
 import BottomNav from '../components/BottomNav';
-import * as FileSystem from 'expo-file-system';
 import { useRouter } from 'expo-router';
 import { useUser } from '../context/UserContext';
+import API_BASE_URL from '../config/api';
 
 const YELLOW = '#FFD600';
 const BLACK = '#000';
 const WHITE = '#fff';
 
 export default function ManualDonation() {
-  const [name, setName] = useState('');
-  const [amount, setAmount] = useState('');
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const router = useRouter();
-  const { user } = useUser();
+  const { user, token } = useUser();
 
   const handleSubmit = async () => {
-    if (!name || !amount || !email) {
+    if (!title || !description) {
       Alert.alert('Please fill in all required fields.');
       return;
     }
-    const donation = { name, amount, email, message, date: new Date().toISOString() };
-    const fileUri = FileSystem.documentDirectory + 'donations.json';
+
     try {
-      let donations = [];
-      const fileInfo = await FileSystem.getInfoAsync(fileUri);
-      if (fileInfo.exists) {
-        const content = await FileSystem.readAsStringAsync(fileUri);
-        donations = JSON.parse(content);
+      const response = await fetch(`${API_BASE_URL}/api/donated-items`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          title,
+          description,
+          userId: user?._id,
+        }),
+      });
+
+      if (response.ok) {
+        Alert.alert('Success', 'Thank you for your donation! It will be reviewed by an admin.');
+        setTitle('');
+        setDescription('');
+        router.replace('/home');
+      } else {
+        const data = await response.json();
+        Alert.alert('Error', data.error || 'Failed to submit donation');
       }
-      donations.push(donation);
-      await FileSystem.writeAsStringAsync(fileUri, JSON.stringify(donations, null, 2));
-      Alert.alert('Thank you for your donation!');
-      setName(''); setAmount(''); setEmail(''); setMessage('');
-      router.replace('/home');
-    } catch (e) {
-      Alert.alert('Error saving donation.');
+    } catch (error) {
+      Alert.alert('Error', 'Network error. Please try again.');
     }
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <TopBar onLogout={() => {}} userName={`${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim() || user?.email || ''} />
-        <Text style={styles.heading}>Manual Input</Text>
+        <TopBar user={user || {}} onLogout={() => router.replace('/login')} />
+        <Text style={styles.heading}>Donate an Item</Text>
         <View style={styles.formGroup}>
-          <Text style={styles.label}>Name</Text>
-          <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="Value" placeholderTextColor="#aaa" />
+          <Text style={styles.label}>Item Title</Text>
+          <TextInput 
+            style={styles.input} 
+            value={title} 
+            onChangeText={setTitle} 
+            placeholder="e.g., Textbooks, Clothing, Food" 
+            placeholderTextColor="#aaa" 
+          />
         </View>
         <View style={styles.formGroup}>
-          <Text style={styles.label}>Amount</Text>
-          <TextInput style={styles.input} value={amount} onChangeText={setAmount} placeholder="Value" placeholderTextColor="#aaa" keyboardType="numeric" />
-        </View>
-        <View style={styles.formGroup}>
-          <Text style={styles.label}>Email</Text>
-          <TextInput style={styles.input} value={email} onChangeText={setEmail} placeholder="Value" placeholderTextColor="#aaa" keyboardType="email-address" />
-        </View>
-        <View style={styles.formGroup}>
-          <Text style={styles.label}>Message</Text>
-          <TextInput style={[styles.input, styles.textArea]} value={message} onChangeText={setMessage} placeholder="Value" placeholderTextColor="#aaa" multiline numberOfLines={3} />
+          <Text style={styles.label}>Description</Text>
+          <TextInput 
+            style={[styles.input, styles.textArea]} 
+            value={description} 
+            onChangeText={setDescription} 
+            placeholder="Describe the item you're donating..." 
+            placeholderTextColor="#aaa" 
+            multiline 
+            numberOfLines={4} 
+          />
         </View>
         <TouchableOpacity style={styles.submitBtn} onPress={handleSubmit}>
-          <Text style={styles.submitText}>Submit</Text>
+          <Text style={styles.submitText}>Submit Donation</Text>
         </TouchableOpacity>
       </View>
       <BottomNav />

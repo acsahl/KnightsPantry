@@ -3,7 +3,8 @@ import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity, Alert } 
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import TopBar from '../components/TopBar';
 import BottomNav from '../components/BottomNav';
-import * as FileSystem from 'expo-file-system';
+import { useUser } from '../context/UserContext';
+import API_BASE_URL from '../config/api';
 
 const YELLOW = '#FFD600';
 const BLACK = '#000';
@@ -13,25 +14,39 @@ export default function ConfirmProductPage() {
   const router = useRouter();
   const { title, description, image } = useLocalSearchParams();
   const [saving, setSaving] = useState(false);
+  const { user, token } = useUser();
 
   const handleConfirm = async () => {
+    if (!user?._id || !token) {
+      Alert.alert('Error', 'Please log in to donate items');
+      return;
+    }
+
     setSaving(true);
-    const item = { title, description, date: new Date().toISOString() };
-    const fileUri = FileSystem.documentDirectory + 'donatedItems.json';
     try {
-      let items = [];
-      const fileInfo = await FileSystem.getInfoAsync(fileUri);
-      if (fileInfo.exists) {
-        const content = await FileSystem.readAsStringAsync(fileUri);
-        items = JSON.parse(content);
+      const response = await fetch(`${API_BASE_URL}/api/donated-items`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          title: String(title),
+          description: String(description),
+          userId: user._id,
+        }),
+      });
+
+      if (response.ok) {
+        Alert.alert('Success', 'Thank you for your donation! It will be reviewed by an admin.', [
+          { text: 'OK', onPress: () => router.replace('/home') }
+        ]);
+      } else {
+        const data = await response.json();
+        Alert.alert('Error', data.error || 'Failed to submit donation');
       }
-      items.push(item);
-      await FileSystem.writeAsStringAsync(fileUri, JSON.stringify(items, null, 2));
-      Alert.alert('Item added!', 'The item has been added to donatedItems.json.', [
-        { text: 'OK', onPress: () => router.replace('/home') }
-      ]);
-    } catch (e) {
-      Alert.alert('Error', 'Could not save item.');
+    } catch (error) {
+      Alert.alert('Error', 'Network error. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -40,7 +55,7 @@ export default function ConfirmProductPage() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <TopBar onLogout={() => router.replace('/')} />
+        <TopBar user={user || {}} onLogout={() => router.replace('/login')} />
         <Text style={styles.heading}>Is this your item?</Text>
         {image ? <Image source={{ uri: String(image) }} style={styles.productImage} /> : null}
         <Text style={styles.productTitle}>{title}</Text>
