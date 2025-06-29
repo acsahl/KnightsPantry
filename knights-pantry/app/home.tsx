@@ -6,6 +6,7 @@ import ProductCard from '../components/ProductCard';
 import exampleProducts from '../assets/exampleProducts.json';
 import TopBar from '../components/TopBar';
 import BottomNav from '../components/BottomNav';
+import { useUser } from '../context/UserContext';
 
 const YELLOW = '#FFD600';
 const BLACK = '#000';
@@ -30,6 +31,7 @@ export default function HomePage() {
   const params = useLocalSearchParams();
   const [search, setSearch] = useState(params.search ? String(params.search) : '');
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const { user } = useUser();
 
   useEffect(() => {
     if (params.search && !search) {
@@ -58,7 +60,7 @@ export default function HomePage() {
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.container}>
           {/* Top Bar */}
-          <TopBar onLogout={() => router.replace('/')} />
+          <TopBar onLogout={() => router.replace('/')} user={user || {}} />
 
           {/* Search Bar */}
           <View style={styles.searchBarWrapper}>

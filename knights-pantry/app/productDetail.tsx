@@ -5,6 +5,7 @@ import { MaterialIcons, Feather, Ionicons } from '@expo/vector-icons';
 import TopBar from '../components/TopBar';
 import BottomNav from '../components/BottomNav';
 import { useCart } from '../context/CartContext';
+import { useUser } from '../context/UserContext';
 
 const YELLOW = '#FFD600';
 const BLACK = '#000';
@@ -15,13 +16,14 @@ export default function ProductDetailPage() {
   const { title, description, category } = useLocalSearchParams();
   const [search, setSearch] = React.useState('');
   const { addToCart, cartItems } = useCart();
+  const { user } = useUser();
 
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.container}>
-          <TopBar onLogout={() => router.replace('/')} />
+          <TopBar onLogout={() => router.replace('/')} userName={`${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim() || user?.email || ''} />
           {/* Search Bar */}
           <View style={styles.searchBar}>
             <TextInput

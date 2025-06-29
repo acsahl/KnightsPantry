@@ -4,6 +4,7 @@ import TopBar from '../components/TopBar';
 import BottomNav from '../components/BottomNav';
 import * as FileSystem from 'expo-file-system';
 import { useRouter } from 'expo-router';
+import { useUser } from '../context/UserContext';
 
 const YELLOW = '#FFD600';
 const BLACK = '#000';
@@ -15,6 +16,7 @@ export default function ManualDonation() {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const router = useRouter();
+  const { user } = useUser();
 
   const handleSubmit = async () => {
     if (!name || !amount || !email) {
@@ -43,7 +45,7 @@ export default function ManualDonation() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <TopBar onLogout={() => {}} />
+        <TopBar onLogout={() => {}} userName={`${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim() || user?.email || ''} />
         <Text style={styles.heading}>Manual Input</Text>
         <View style={styles.formGroup}>
           <Text style={styles.label}>Name</Text>

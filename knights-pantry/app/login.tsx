@@ -10,8 +10,10 @@ import {
   KeyboardAvoidingView,
   Platform,
   Dimensions,
+  Alert,
 } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
+import { useUser } from '../context/UserContext';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
@@ -19,6 +21,34 @@ export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
+  const { setUser, setToken } = useUser();
+
+  const handleLogin = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setUser(data.user);
+        setToken(data.token);
+        Alert.alert('Success', 'Logged in!');
+        
+        // Route based on admin status
+        if (data.user.isAdmin) {
+          router.push('/admin');
+        } else {
+          router.push('/home');
+        }
+      } else {
+        Alert.alert('Error', data.error || 'Login failed');
+      }
+    } catch (err: any) {
+      Alert.alert('Error', err.message);
+    }
+  };
 
   return (
     <>
@@ -61,7 +91,7 @@ export default function LoginScreen() {
               secureTextEntry
             />
             
-            <TouchableOpacity style={styles.signInButton} onPress={() => router.push('/home')}>
+            <TouchableOpacity style={styles.signInButton} onPress={handleLogin}>
               <Text style={styles.signInButtonText}>Log In</Text>
             </TouchableOpacity>
           </View>

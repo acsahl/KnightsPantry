@@ -4,6 +4,7 @@ import { Stack, useRouter } from 'expo-router';
 import { MaterialIcons, Feather, Ionicons, FontAwesome } from '@expo/vector-icons';
 import TopBar from '../components/TopBar';
 import BottomNav from '../components/BottomNav';
+import { useUser } from '../context/UserContext';
 
 const YELLOW = '#FFD600';
 const BLACK = '#000';
@@ -11,31 +12,14 @@ const WHITE = '#fff';
 
 export default function LogItemPage() {
   const router = useRouter();
+  const { user } = useUser();
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.container}>
           {/* Top Bar */}
-          <View style={styles.topBar}>
-            <View style={styles.userInfo}>
-              <View style={styles.avatarCircle}>
-                <MaterialIcons name="person" size={28} color={YELLOW} />
-              </View>
-              <View>
-                <Text style={styles.hello}>Hello</Text>
-                <Text style={styles.userName}>Acsah Lukose</Text>
-              </View>
-            </View>
-            <View style={styles.topIcons}>
-              <TouchableOpacity style={styles.iconBtn}>
-                <Feather name="bell" size={24} color={YELLOW} />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.iconBtn} onPress={() => router.replace('/')}>
-                <MaterialIcons name="logout" size={24} color={YELLOW} />
-              </TouchableOpacity>
-            </View>
-          </View>
+          <TopBar onLogout={() => router.replace('/')} user={user || {}} />
 
           {/* Heading */}
           <Text style={styles.heading}>Log your item{"\n"}in two ways.</Text>

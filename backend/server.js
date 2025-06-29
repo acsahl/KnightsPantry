@@ -20,8 +20,20 @@ const userSchema = new mongoose.Schema({
   firstName: String,
   lastName: String,
   ucfId: String,
+  isAdmin: { type: Boolean, default: false },
 });
 const User = mongoose.model('User', userSchema);
+
+// Donated Item Schema
+const donatedItemSchema = new mongoose.Schema({
+  title: String,
+  description: String,
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  approved: { type: Boolean, default: false },
+  denied: { type: Boolean, default: false },
+  createdAt: { type: Date, default: Date.now },
+});
+const DonatedItem = mongoose.model('DonatedItem', donatedItemSchema);
 
 // Connect to MongoDB
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -38,7 +50,23 @@ app.post('/api/signup', async (req, res) => {
     const hashed = await bcrypt.hash(password, 10);
     const user = new User({ email, password: hashed, firstName, lastName, ucfId });
     await user.save();
-    res.status(201).json({ message: 'User created' });
+    
+    // Generate JWT token
+    const token = jwt.sign({ userId: user._id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
+    
+    // Return user object and token similar to login
+    res.status(201).json({ 
+      message: 'User created',
+      token,
+      user: {
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        ucfId: user.ucfId,
+        isAdmin: user.isAdmin,
+        _id: user._id,
+      }
+    });
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
   }
@@ -54,7 +82,84 @@ app.post('/api/login', async (req, res) => {
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) return res.status(401).json({ error: 'Invalid credentials' });
     const token = jwt.sign({ userId: user._id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, user: { email: user.email, firstName: user.firstName, lastName: user.lastName, ucfId: user.ucfId } });
+    res.json({
+      token,
+      user: {
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        ucfId: user.ucfId,
+        isAdmin: user.isAdmin,
+        _id: user._id,
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Middleware to verify JWT token
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+  
+  if (!token) return res.status(401).json({ error: 'Access token required' });
+  
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+    if (err) return res.status(403).json({ error: 'Invalid token' });
+    req.user = user;
+    next();
+  });
+}
+
+// Middleware to check admin (uses JWT token)
+function requireAdmin(req, res, next) {
+  if (!req.user) return res.status(401).json({ error: 'Authentication required' });
+  
+  User.findById(req.user.userId).then(user => {
+    if (user && user.isAdmin) return next();
+    res.status(403).json({ error: 'Admin access required' });
+  }).catch(() => res.status(500).json({ error: 'Server error' }));
+}
+
+// Create donated item (user must be logged in, pass userId)
+app.post('/api/donated-items', async (req, res) => {
+  const { title, description, userId } = req.body;
+  if (!title || !description || !userId) return res.status(400).json({ error: 'Missing fields' });
+  try {
+    const item = new DonatedItem({ title, description, user: userId });
+    await item.save();
+    res.status(201).json({ message: 'Donated item created' });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Admin: list all donated items with user info
+app.get('/api/admin/donated-items', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const items = await DonatedItem.find().populate('user', 'firstName lastName email');
+    res.json(items);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Admin: approve donated item
+app.put('/api/admin/donated-items/:id/approve', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    await DonatedItem.findByIdAndUpdate(req.params.id, { approved: true, denied: false });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Admin: deny donated item
+app.put('/api/admin/donated-items/:id/deny', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    await DonatedItem.findByIdAndUpdate(req.params.id, { approved: false, denied: true });
+    res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
   }

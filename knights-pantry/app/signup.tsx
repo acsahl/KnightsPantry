@@ -1,14 +1,43 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, SafeAreaView, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, SafeAreaView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
+import { useUser } from '../context/UserContext';
 
 export default function SignUpScreen() {
   const router = useRouter();
+  const { setUser, setToken } = useUser();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [ucfId, setUcfId] = useState('');
   const [password, setPassword] = useState('');
+
+  const handleSignUp = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/api/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, firstName, lastName, ucfId }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setUser(data.user);
+        setToken(data.token);
+        Alert.alert('Success', 'Account created!');
+        
+        // Route based on admin status
+        if (data.user.isAdmin) {
+          router.push('/admin');
+        } else {
+          router.push('/home');
+        }
+      } else {
+        Alert.alert('Error', data.error || 'Sign up failed');
+      }
+    } catch (error: any) {
+      Alert.alert('Error', error.message);
+    }
+  };
 
   return (
     <>
@@ -30,7 +59,7 @@ export default function SignUpScreen() {
             <Text style={styles.label}>Password</Text>
             <TextInput style={styles.input} value={password} onChangeText={setPassword} placeholder="Password" placeholderTextColor="#aaa" secureTextEntry />
           </View>
-          <TouchableOpacity style={styles.signupBtn} onPress={() => router.replace('/home')}>
+          <TouchableOpacity style={styles.signupBtn} onPress={handleSignUp}>
             <Text style={styles.signupText}>Sign up</Text>
           </TouchableOpacity>
         </KeyboardAvoidingView>

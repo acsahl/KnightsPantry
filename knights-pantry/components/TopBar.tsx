@@ -5,8 +5,15 @@ import { useCart } from '../context/CartContext';
 
 const YELLOW = '#FFD600';
 
-export default function TopBar({ onLogout }: { onLogout: () => void }) {
+export type TopBarUser = {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+};
+
+export default function TopBar({ onLogout, user }: { onLogout: () => void, user: TopBarUser }) {
   const { setShowNotificationOverlay } = useCart();
+  const displayName = `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim() || user?.email || '';
   return (
     <View style={styles.topBar}>
       <View style={styles.userInfo}>
@@ -15,7 +22,7 @@ export default function TopBar({ onLogout }: { onLogout: () => void }) {
         </View>
         <View>
           <Text style={styles.hello}>Hello</Text>
-          <Text style={styles.userName}>Acsah Lukose</Text>
+          <Text style={styles.userName}>{displayName}</Text>
         </View>
       </View>
       <View style={styles.topIcons}>
