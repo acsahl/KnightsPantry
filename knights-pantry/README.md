@@ -2,6 +2,27 @@
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
+## Environment Setup
+
+Before running the app, you need to set up your environment variables:
+
+1. Copy the example environment file:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Edit the `.env` file and add your Google API key:
+   ```
+   GEMINI_API_KEY=your_actual_google_api_key_here
+   ```
+
+3. If you're using Firebase, copy the example Firebase configuration:
+   ```bash
+   cp GoogleService-Info.plist.example GoogleService-Info.plist
+   ```
+   
+   Then edit `GoogleService-Info.plist` with your actual Firebase configuration values.
+
 ## Get started
 
 1. Install dependencies
