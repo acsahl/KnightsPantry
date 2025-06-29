@@ -11,6 +11,7 @@ import {
 import { Stack } from 'expo-router';
 import { useUser } from '../context/UserContext';
 import TopBar from '../components/TopBar';
+import API_BASE_URL from '../config/api';
 
 interface DonatedItem {
   _id: string;
@@ -32,7 +33,7 @@ export default function AdminScreen() {
 
   const fetchDonatedItems = async () => {
     try {
-      const response = await fetch('http://localhost:4000/api/admin/donated-items', {
+      const response = await fetch(`${API_BASE_URL}/api/admin/donated-items`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -50,7 +51,7 @@ export default function AdminScreen() {
 
   const handleApprove = async (itemId: string) => {
     try {
-      const response = await fetch(`http://localhost:4000/api/admin/donated-items/${itemId}/approve`, {
+      const response = await fetch(`${API_BASE_URL}/api/admin/donated-items/${itemId}/approve`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -69,7 +70,7 @@ export default function AdminScreen() {
 
   const handleDeny = async (itemId: string) => {
     try {
-      const response = await fetch(`http://localhost:4000/api/admin/donated-items/${itemId}/deny`, {
+      const response = await fetch(`${API_BASE_URL}/api/admin/donated-items/${itemId}/deny`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,

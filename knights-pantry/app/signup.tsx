@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, SafeAreaView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { useUser } from '../context/UserContext';
+import API_BASE_URL from '../config/api';
 
 export default function SignUpScreen() {
   const router = useRouter();
@@ -14,7 +15,7 @@ export default function SignUpScreen() {
 
   const handleSignUp = async () => {
     try {
-      const response = await fetch('http://localhost:4000/api/signup', {
+      const response = await fetch(`${API_BASE_URL}/api/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, firstName, lastName, ucfId }),
