@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Dimensions, FlatList } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Dimensions, FlatList, ScrollView } from 'react-native';
 import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
 import { MaterialIcons, Feather, FontAwesome, Ionicons } from '@expo/vector-icons';
 import ProductCard from '../components/ProductCard';
@@ -88,7 +88,11 @@ export default function HomePage() {
               contentContainerStyle={{ paddingBottom: 20 }}
             />
           ) : (
-            <>
+            <ScrollView 
+              style={styles.scrollView} 
+              contentContainerStyle={styles.scrollContent}
+              showsVerticalScrollIndicator={false}
+            >
               {/* Categories */}
               <View style={styles.categoriesGrid}>
                 {categories.map((cat, idx) => (
@@ -127,7 +131,7 @@ export default function HomePage() {
                   <Text style={styles.adminButtonText}>Admin Dashboard</Text>
                 </TouchableOpacity>
               )}
-            </>
+            </ScrollView>
           )}
         </View>
         {/* Bottom Nav Bar */}
@@ -254,5 +258,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginLeft: 8,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 100, // Extra padding for BottomNav
   },
 }); 
