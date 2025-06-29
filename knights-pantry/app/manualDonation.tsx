@@ -16,9 +16,14 @@ export default function ManualDonation() {
   const router = useRouter();
   const { user, token } = useUser();
 
-  const handleSubmit = async () => {
-    if (!title || !description) {
-      Alert.alert('Please fill in all required fields.');
+  const handleSignUp = async () => {
+    if (!title) {
+      Alert.alert('Please provide an item title.');
+      return;
+    }
+
+    if (!user?._id || !token) {
+      Alert.alert('Error', 'Please log in to donate items');
       return;
     }
 
@@ -31,8 +36,8 @@ export default function ManualDonation() {
         },
         body: JSON.stringify({
           title,
-          description,
-          userId: user?._id,
+          description: description || undefined,
+          userId: user._id,
         }),
       });
 
@@ -77,7 +82,7 @@ export default function ManualDonation() {
             numberOfLines={4} 
           />
         </View>
-        <TouchableOpacity style={styles.submitBtn} onPress={handleSubmit}>
+        <TouchableOpacity style={styles.submitBtn} onPress={handleSignUp}>
           <Text style={styles.submitText}>Submit Donation</Text>
         </TouchableOpacity>
       </View>

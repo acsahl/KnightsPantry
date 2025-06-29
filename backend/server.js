@@ -120,12 +120,16 @@ function requireAdmin(req, res, next) {
 // Create donated item (add to user's donatedItems array)
 app.post('/api/donated-items', async (req, res) => {
   const { title, description, userId } = req.body;
-  if (!title || !description || !userId) return res.status(400).json({ error: 'Missing fields' });
+  if (!title || !userId) return res.status(400).json({ error: 'Title and userId required' });
+  
   try {
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ error: 'User not found' });
     
-    user.donatedItems.push({ title, description });
+    // Use description if provided, otherwise use a default
+    const itemDescription = description || 'No description provided';
+    
+    user.donatedItems.push({ title, description: itemDescription });
     await user.save();
     
     res.status(201).json({ message: 'Donated item created' });
@@ -137,7 +141,7 @@ app.post('/api/donated-items', async (req, res) => {
 // Admin: list all donated items with user info
 app.get('/api/admin/donated-items', authenticateToken, requireAdmin, async (req, res) => {
   try {
-    const users = await User.find({ 'donatedItems.0': { $exists: true } }, 'firstName lastName email donatedItems');
+    const users = await User.find({ 'donatedItems.0': { $exists: true } }, 'firstName lastName email ucfId donatedItems');
     
     const allItems = [];
     users.forEach(user => {
@@ -151,7 +155,8 @@ app.get('/api/admin/donated-items', authenticateToken, requireAdmin, async (req,
           user: {
             firstName: user.firstName,
             lastName: user.lastName,
-            email: user.email
+            email: user.email,
+            ucfId: user.ucfId
           }
         });
       });

@@ -32,7 +32,7 @@ export default function ConfirmProductPage() {
         },
         body: JSON.stringify({
           title: String(title),
-          description: String(description),
+          description: description ? String(description) : undefined,
           userId: user._id,
         }),
       });

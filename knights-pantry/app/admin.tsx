@@ -22,6 +22,7 @@ interface DonatedItem {
     firstName: string;
     lastName: string;
     email: string;
+    ucfId: string;
   };
   status: 'pending' | 'approved' | 'denied';
   createdAt: string;
@@ -109,8 +110,16 @@ export default function AdminScreen() {
       </View>
       <Text style={styles.itemDescription}>{item.description}</Text>
       <Text style={styles.donorInfo}>
-        Donated by: {item.user.firstName} {item.user.lastName} ({item.user.email})
+        Donated by: {item.user.firstName} {item.user.lastName}
       </Text>
+      <Text style={styles.donorInfo}>
+        Email: {item.user.email}
+      </Text>
+      {item.user.ucfId && (
+        <Text style={styles.donorInfo}>
+          UCF ID: {item.user.ucfId}
+        </Text>
+      )}
       <Text style={styles.dateInfo}>
         {new Date(item.createdAt).toLocaleDateString()}
       </Text>

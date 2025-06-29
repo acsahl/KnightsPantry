@@ -17,8 +17,8 @@ export default function ManualItemInput() {
   const { user, token } = useUser();
 
   const handleSubmit = async () => {
-    if (!title || !description) {
-      Alert.alert('Please fill in all fields.');
+    if (!title) {
+      Alert.alert('Please provide an item title.');
       return;
     }
 
@@ -36,7 +36,7 @@ export default function ManualItemInput() {
         },
         body: JSON.stringify({
           title,
-          description,
+          description: description || undefined,
           userId: user._id,
         }),
       });
